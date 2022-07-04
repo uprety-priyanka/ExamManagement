@@ -1,0 +1,62 @@
+﻿syntax = "proto3";
+option csharp_namespace = "Grpc.Protos";
+
+package ExamManagement.Package;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service FacultyGrpcService
+{
+	rpc GetAllFaculty(SearchMessage) returns(stream FacultyMessage);
+	rpc GetFacultyById(IdMessage) returns(FacultyMessage);
+	rpc AddFaculty(AddFacultyMessage) returns (AddFacultyResultMessage);
+	rpc DeleteFaculty(IdMessage) returns (DeleteFacultyResultMessage);
+	rpc UpdateFaculty(UpdateFacultyMessage) returns(UpdateFacultyResultMessage);
+}
+
+message DeleteFacultyResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message UpdateFacultyResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message UpdateFacultyMessage
+{
+	int32 Id = 1;
+	string facultyName = 2;
+}
+
+message AddFacultyMessage 
+{
+	string facultyName = 1;
+}
+
+message AddFacultyResultMessage
+{
+	bool success = 1;
+	string Message = 2;
+}
+
+message SearchMessage
+{
+	optional string search = 1;
+}
+
+message FacultyMessage
+{
+	int32 id = 1;
+	string facultyName = 2;
+	google.protobuf.Timestamp createdDate = 3;
+}
+
+message IdMessage
+{
+	int32 id =1;
+}

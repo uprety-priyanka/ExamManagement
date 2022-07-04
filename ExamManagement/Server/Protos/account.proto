@@ -1,0 +1,116 @@
+﻿syntax = "proto3";
+option csharp_namespace = "Grpc.Protos";
+
+package ExamManagement.Package;
+
+import "google/protobuf/empty.proto";
+
+service AccountGrpcService
+{
+	rpc GetCurrentUser(google.protobuf.Empty) returns (CurrentUserMessage);
+	rpc LoginUser(LoginUserMessage) returns (LoginUserResultMessage);
+	rpc RegisterSuperAdmin(RegisterSuperAdminMessage) returns (RegisterSuperAdminResultMessage);
+	rpc CheckEmail(CheckEmailMessage) returns (CheckEmailResultMessage);
+	rpc CheckUserName(CheckUserNameMessage) returns (CheckUserNameResultMessage);
+	rpc RegisterDepartmentAdmin(RegisterDepartmentAdminMessage) returns (RegisterDepartmentAdminResultMessage);
+	rpc RegisterStudent(RegisterStudentMessage) returns(RegisterStudentResultMessage);
+	rpc LogOutUser(google.protobuf.Empty) returns (google.protobuf.Empty);
+}
+
+message CurrentUserMessage
+{
+	string id = 1;
+	string givenName = 2;
+	string surName = 3;
+	string role = 4;
+	string userName = 5;
+	string emailAddress = 6;
+	bool isSuccess = 7;
+}
+
+message LoginUserMessage
+{
+	string info = 1;
+	string password = 2;
+}
+
+message LoginUserResultMessage
+{
+	bool success = 1;
+	enum LoginErrorTypes
+	{
+		NoSuchUser = 0;
+		IncorrectPassword = 1;
+		NoAnyError = 2;
+	}
+	LoginErrorTypes LoginErrorType = 2;
+}
+
+message RegisterSuperAdminMessage 
+{
+	string givenName = 1;
+	string surName = 2;
+	string userName = 3;
+	string email = 4;
+	string password = 5;
+}
+
+message RegisterSuperAdminResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message CheckEmailMessage
+{
+	string email = 1;
+}
+
+message CheckEmailResultMessage 
+{
+	bool Exists = 1;
+}
+
+message CheckUserNameMessage
+{
+	string userName = 1;
+}
+
+message CheckUserNameResultMessage 
+{
+	bool Exists = 1;
+}
+
+message RegisterDepartmentAdminMessage
+{
+	string givenName = 1;
+	string surName = 2;
+	string userName = 3;
+	string email = 4;
+	string password = 5;
+	int32 facultyId = 6;
+}
+
+message RegisterDepartmentAdminResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message RegisterStudentMessage
+{
+	string givenName = 1;
+	string surName = 2;
+	string userName = 3;
+	string email = 4;
+	string password = 5;
+	int32 facultyId = 6;
+	string registrationNumber = 7;
+	string examNumber = 8;
+}
+
+message RegisterStudentResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}

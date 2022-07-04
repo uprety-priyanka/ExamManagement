@@ -1,0 +1,97 @@
+﻿@page "/account/login"
+@layout EmptyLayout
+@inherits LoginBase
+
+<PageTitle>Welcome to Login</PageTitle>
+
+<div id="hold-container">
+    <div id="on-left">
+    </div>
+    <MudDivider class="self-divider" Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Style="height: 70vh;width: 1px;margin: 15vh auto;" />
+    <div id="login-form">
+        <EditForm Model="@loginViewModel" OnValidSubmit="@LogUserIn">
+            <DataAnnotationsValidator />
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">Login to continue session</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText Typo="Typo.body2" Color="Color.Error" @bind-value="@InfoDisplayer">@InfoDisplayer</MudText>
+                <MudTextField Immediate="false" Label="Username or Email" For="@(()=>loginViewModel.Info)" @bind-Value="loginViewModel.Info" InputType="InputType.Text" Class="mt-3" AutoFocus="@true"></MudTextField>
+                <MudTextField Immediate="false" Label="Password" For="@(()=> loginViewModel.Password)" @bind-Value="loginViewModel.Password" InputType="InputType.Password" Class="mt-3"></MudTextField>
+                <MudCardActions>
+                    <MudButton ButtonType="ButtonType.Submit" Disabled="loginButton" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
+                        @if (loginButton)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Logging in</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Log in</MudText>
+                        }
+                    </MudButton>
+                </MudCardActions>
+                <MudItem Style="text-align:right;">
+                    <MudSpacer />
+                    <MudLink Class="reg">Forgot your password?</MudLink>
+                    <br />
+                    <MudSpacer />
+                    <MudLink Class="reg" Href="/registersuperadmin">Don't have an account?</MudLink>
+                </MudItem>
+            </MudCardContent>
+        </EditForm>
+    </div>
+</div>
+
+<style>
+    #hold-container {
+        height: 100vh;
+        width: 100%;
+        display: table;
+    }
+
+    .seperator {
+        height: 100%;
+        width: 1px;
+        background: black;
+        top: 0;
+        bottom: 0;
+        position: absolute;
+        left: 50%;
+    }
+
+    #on-left {
+        width: 50%;
+        min-height: 100vh;
+        background: url("/RawFiles/login-img.png");
+        background-repeat: no-repeat;
+        display: table-cell;
+        vertical-align: middle;
+        background-position: center;
+        background-size: cover;
+    }
+
+    #login-form {
+        width: 50%;
+        padding: 0px 10%;
+        display: table-cell;
+        vertical-align: middle;
+    }
+
+    @@media only screen and (max-width: 600px) {
+        #on-left {
+            display: none;
+        }
+
+        .self-divider {
+            display: none;
+        }
+    }
+
+    .reg {
+        cursor: pointer;
+    }
+
+</style>

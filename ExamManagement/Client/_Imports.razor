@@ -1,0 +1,24 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using ExamManagement.Client.Data
+@using Grpc.Protos
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using ExamManagement.Client
+@using ExamManagement.Client.Shared
+@using ExamManagement.Client.Codes.Account
+@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
+@inject EMSAuthenticationStateProvider _authStateProvider
+@inject NavigationManager _navigationManager
+@inject AccountGrpcService.AccountGrpcServiceClient _accountGrpcClient
+@using System.Security.Claims
+@using Google.Protobuf.WellKnownTypes
+@inject NavigationManager _navigate
+@using ExamManagement.Client.Codes.Faculty
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService

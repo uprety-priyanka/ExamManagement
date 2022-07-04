@@ -1,0 +1,29 @@
+﻿@inherits AddFacultyDialogBase
+
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <EditForm Model="model" OnValidSubmit="AddFacultyRecord">
+            <DataAnnotationsValidator />
+            <MudContainer>
+                <MudTextField Label="Faculty Name" For="@(()=>model.FacultyName)" @bind-Value="model.FacultyName" InputType="InputType.Text"></MudTextField>
+                <MudCardActions>
+                    <MudSpacer />
+                    <MudButton Style="margin-right:4px;" ButtonType="ButtonType.Reset" OnClick="()=>MudDialog.Cancel()" Variant="Variant.Filled" Color="Color.Dark">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Disabled="submitButton" Variant="Variant.Filled" Color="Color.Primary">
+                        @if (submitButton)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Adding Faculty</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Add Faculty</MudText>
+                        }
+                    </MudButton>
+                </MudCardActions>
+
+            </MudContainer>
+        </EditForm>
+    </DialogContent>
+</MudDialog>

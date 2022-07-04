@@ -1,0 +1,93 @@
+﻿<PageTitle>Register Super Admin</PageTitle>
+
+@page "/registersuperadmin"
+@layout EmptyLayout
+@inherits RegisterSuperAdminBase
+
+<div id="hold-container">
+	<div id="on-left">
+	</div>
+	<MudDivider class="self-divider" Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Style="height: 70vh;width: 1px;margin: 15vh auto;" />
+	<div id="register-form">
+		<EditForm Model="@registerSuperAdminViewModel" OnValidSubmit="RegisterSuperAdmin">
+				<MudCardHeader><MudText Typo="Typo.h6">Register yourself as a Superadmin</MudText></MudCardHeader>
+				<MudCardContent>
+					<MudTextField Immediate="true" Label="First Name" For="@(()=>registerSuperAdminViewModel.FirstName)" @bind-Value="registerSuperAdminViewModel.FirstName" InputType="InputType.Text"  Class="mt-3" AutoFocus="@true"></MudTextField>
+					<MudTextField Immediate="true" Label="Last Name" For="@(()=>registerSuperAdminViewModel.LastName)" @bind-Value="registerSuperAdminViewModel.LastName" InputType="InputType.Text"  Class="mt-3"></MudTextField>
+					<MudTextField Label="Username" For="@(()=>registerSuperAdminViewModel.UserName)" @bind-Value="registerSuperAdminViewModel.UserName" InputType="InputType.Text" Validation="@(new Func<string, Task<string>>(checkUserName))" DebounceInterval="1.7" RequiredError="Username is already taken." Class="mt-3"></MudTextField>
+					<MudTextField T="string" Immediate="true" Validation="@(new Func<string, Task<string>>(checkEmail))" Label="Email Address" For="@(()=>registerSuperAdminViewModel.Email)" @bind-Value="registerSuperAdminViewModel.Email"  DebounceInterval="1.7" RequiredError="Email address already exists." InputType="InputType.Email" InputMode="InputMode.email" Class="mt-3"></MudTextField>
+					<MudTextField Immediate="true" Label="Password" For="@(()=>registerSuperAdminViewModel.Password)" @bind-Value="registerSuperAdminViewModel.Password" InputType="InputType.Password" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" RequiredError="@passError" Class="mt-3"></MudTextField>
+					<MudTextField Immediate="true" Label="Confirm Password" For="@(()=>registerSuperAdminViewModel.ConfirmPassword)" @bind-Value="registerSuperAdminViewModel.ConfirmPassword" InputType="InputType.Password" Class="mt-3"></MudTextField>
+					<MudCardActions>
+
+						<MudButton ButtonType="ButtonType.Submit" Disabled="RegisterButton" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">
+                        @if (RegisterButton)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Registering</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Register</MudText>
+                        }
+                    </MudButton>
+
+					</MudCardActions>
+					<MudItem Style="text-align:right;">
+						<MudSpacer />
+						<MudLink Class="reg" Href="/">Already have an account?</MudLink>
+					</MudItem>
+				</MudCardContent>
+		</EditForm>
+	</div>
+</div>
+
+<style>
+	#hold-container
+	{
+		height:100vh;
+		width:100%;
+		display: table;
+	}
+	.seperator 
+	{
+	  height: 100%;
+	  width: 1px;
+	  background: black;
+	  top: 0;
+	  bottom: 0;
+	  position: absolute;
+	  left: 50%;
+	}
+	#on-left
+	{
+		width: 50%;
+		min-height: 100vh;
+		background: url("/RawFiles/register-logo.jpg");
+		background-repeat: no-repeat;
+		display: table-cell;
+		vertical-align: middle;
+		background-position: center;
+		background-size:cover;
+	}
+
+	#register-form
+	{
+		width: 50%;
+		padding: 0px 10%;
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	@@media only screen and (max-width: 600px) 
+	{
+		#on-left{display:none;}
+		.self-divider{display:none;}
+	}
+
+	.reg
+	{
+		cursor:pointer;
+	}
+
+</style>

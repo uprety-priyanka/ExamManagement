@@ -1,0 +1,70 @@
+﻿@inherits LayoutComponentBase
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+        <MudContainer>
+            <MudText Typo="Typo.h6" Style="color:white !important;">Exam Management</MudText>
+        </MudContainer>
+    </MudAppBar>
+    <MudDrawer @bind-Open="open">
+        <MudDrawerContainer>
+            <MudDrawerHeader Style="text-align: center; display:block !important; cursor:pointer;">
+                <MudAvatar Image="/RawFiles/profile.jpg" Size="Size.Large" Class="ma-2" />
+                <MudText>@gn</MudText>
+                <MudText>@sn</MudText>
+            </MudDrawerHeader>
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Filled.Home">Home</MudNavLink>
+            <MudNavLink Href="/faculty" Match="NavLinkMatch.All" Icon="@Icons.Filled.FactCheck">Faculty</MudNavLink>
+            <MudNavLink OnClick="LogOut" Match="NavLinkMatch.All" Icon="@Icons.Filled.Logout">Log out</MudNavLink>
+        </MudDrawerContainer>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+<style>
+    .mud-drawer-header {
+        transition: all 0.3s ease;
+    }
+
+        .mud-drawer-header:hover {
+            background-color: #594ae2;
+            color: ghostwhite;
+            transition: all 0.3s ease;
+        }
+</style>
+@code
+{
+
+    bool open = true;
+    string gn = "";
+    string sn = "";
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var authState = await _authStateProvider.GetAuthenticationStateAsync();
+
+            gn = authState.User.Claims.Where(x => x.Type == ClaimTypes.GivenName).First().Value;
+            sn = authState.User.Claims.Where(x => x.Type == ClaimTypes.Surname).First().Value;
+        }
+        catch (Exception ex) { }
+
+    }
+
+    async Task LogOut()
+    {
+        var logout = _accountGrpcClient.LogOutUserAsync(new Empty());
+        await _authStateProvider.UpdateAuthenticationState();
+        _navigate.NavigateTo("account/login");
+    }
+
+}
