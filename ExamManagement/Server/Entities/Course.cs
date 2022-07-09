@@ -10,6 +10,9 @@ namespace ExamManagement.Server.Entities
         [ForeignKey(nameof(Faculty))]
         public int FacultyId { get; set; }
         public Faculty Faculty { get; set; }
+        [ForeignKey(nameof(SemesterType))]
+        public int SemesterTypeId { get; set; }
+        public ItemType SemesterType { get; set; }
         public string CourseCode { get; set; }
         public string CourseName { get; set; }
         public string ConcurrentRegistrationCourse { get; set; }

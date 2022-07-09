@@ -12,6 +12,7 @@ namespace ExamManagement.Client.Codes.Faculty
         public FacultyGrpcService.FacultyGrpcServiceClient _grpcClient { get; set; }
 
         public List<FacultyMessage> facultyMessage;
+        public string search;
 
         public async Task FetchData(string s) 
         {

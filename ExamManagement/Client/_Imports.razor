@@ -22,3 +22,7 @@
 @using ExamManagement.Client.Codes.Faculty
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject FacultyGrpcService.FacultyGrpcServiceClient facultyGrpcClient
+@using Grpc.Core
+@using ExamManagement.Shared.ItemTypeConstant
+@using ExamManagement.Client.Codes.Course

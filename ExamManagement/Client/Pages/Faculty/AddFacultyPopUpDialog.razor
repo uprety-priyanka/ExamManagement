@@ -1,0 +1,15 @@
+﻿@inherits AddFacultyPopUpDialogBase
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+            <MudContainer>
+                <MudText>There is no any faculty that exists. Do you want to add faculty?</MudText>
+                <MudText>We can redirect you to the page wehre you can add faculty from.</MudText>
+                <MudCardActions>
+                    <MudSpacer />
+                    <MudButton Style="margin-right:4px;" ButtonType="ButtonType.Reset" OnClick="()=>MudDialog.Cancel()" Variant="Variant.Filled" Color="Color.Dark">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" OnClick="RedirectToFaculty" Variant="Variant.Filled" Color="Color.Primary">Redirect to Faculty</MudButton>
+                </MudCardActions>
+            </MudContainer>
+    </DialogContent>
+</MudDialog>

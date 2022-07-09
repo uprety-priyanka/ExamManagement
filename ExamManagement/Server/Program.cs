@@ -90,6 +90,7 @@ app.UseAuthorization();
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapGrpcService<AccountGrpcPipeline>().EnableGrpcWeb().RequireCors("AllowAll");
+    endpoints.MapGrpcService<CourseGrpcPipeline>().EnableGrpcWeb().RequireCors("AllowAll");
     endpoints.MapGrpcService<FacultyGrpcPipeline>().EnableGrpcWeb().RequireCors("AllowAll");
     endpoints.MapRazorPages();
     endpoints.MapDefaultControllerRoute();

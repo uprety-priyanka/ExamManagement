@@ -1,0 +1,90 @@
+﻿syntax = "proto3";
+option csharp_namespace = "Grpc.Protos";
+
+package ExamManagement.Package;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service CourseGrpcService
+{
+	rpc GetCourseByFacultyId(FacultyIdMessage) returns(stream CourseMessage);
+	rpc AddCourse(AddCourseMessage) returns (AddCourseResultMessage);
+	rpc DeleteCourse(DeleteCourseIdMessage) returns(DeleteCourseResultMessage);
+	rpc UpadteCourse(UpdateCourseMessage) returns(UpdateCourseResultMessage);
+}
+
+message UpdateCourseResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message UpdateCourseMessage
+{;
+	int32 facultyId = 1;
+	int32 semesterId = 2;
+	string courseCode = 3;
+	string courseName = 4;
+	optional string concurrentRegistrationCourse = 5;
+	optional string preRequisiteCourse = 6;
+	int32 credit = 7;
+	optional int32 lecture= 8;
+	optional int32 tutorial = 9;
+	optional int32 practical = 10;
+	int32 id = 11;
+}
+
+message DeleteCourseResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message DeleteCourseIdMessage
+{
+	int32 id = 1;
+}
+
+message AddCourseResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message AddCourseMessage
+{
+	int32 facultyId = 1;
+	int32 semesterId = 2;
+	string courseCode = 3;
+	string courseName = 4;
+	optional string concurrentRegistrationCourse = 5;
+	optional string preRequisiteCourse = 6;
+	int32 credit = 7;
+	optional int32 lecture= 8;
+	optional int32 tutorial = 9;
+	optional int32 practical = 10;
+}
+
+message FacultyIdMessage
+{
+	int32 facultyId = 1;
+}
+
+message CourseMessage
+{
+	int32 id = 1;
+	int32 facultyId = 2;
+	string facultyName = 3;
+	int32 semesterId = 4;
+	string SemesterName = 5;
+	string courseCode = 6;
+	string courseName = 7;
+	string concurrentRegistrationCourse = 8;
+	string preRequisiteCourse = 9;
+	int32 credit = 10;
+	int32 lecture= 11;
+	int32 tutorial = 12;
+	int32 practical = 13;
+	google.protobuf.Timestamp createdDate = 14;
+}

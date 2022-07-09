@@ -12,6 +12,7 @@ namespace ExamManagement.Server.Entities
         [ForeignKey(nameof(Faculty))]
         public int FacultyId { get; set; }
         public Faculty Faculty { get; set; }
+        [ForeignKey(nameof(ApplicationUser))]
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
         public DateTime CreatedDate { get; set; }

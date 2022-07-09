@@ -64,5 +64,62 @@ namespace ExamManagement.Server.GrpcPipelines
             return new Empty();
         }
 
+        public override async Task GetDepartmentUser(UserSearchMessage request, IServerStreamWriter<DepartmentUserMessage> responseStream, ServerCallContext context)
+        {
+            var list = await _accountService.GetAllDepartmentAdminAsync(request);
+
+            foreach (var item in list) 
+            {
+                if (context.CancellationToken.IsCancellationRequested)
+                    break;
+
+                await responseStream.WriteAsync(new DepartmentUserMessage 
+                {
+                    Id = item.Id,
+                    UserName = item.UserName,
+                    GivenName = item.GivenName,
+                    SurName = item.SurName,
+                    EmailAddress = item.Email,
+                    Department = item.Department
+                });
+
+            }
+        }
+
+        public override async Task<UserDeleteResultMessage> DeleteDepartmentAdminUser(DepartmentAdminIdMessage request, ServerCallContext context)
+        {
+            var result = await _accountService.DeleteUserAsync(request);
+            return result;
+        }
+
+
+        public override async Task GetStudentByBatch(FacultySearchMessage request, IServerStreamWriter<StudentMessage> responseStream, ServerCallContext context)
+        {
+            var list = await _accountService.GetStudentByBatchAsync(request);
+
+            foreach (var item in list)
+            {
+                if (context.CancellationToken.IsCancellationRequested)
+                    break;
+
+                await responseStream.WriteAsync(new StudentMessage 
+                {
+                    Id=item.Id,
+                    Semester = item.Semester,
+                    ApplicationUserId = item.UserDetailExtension.UserDetail.ApplicationUserId,
+                    EmailAddress = item.UserDetailExtension.UserDetail.ApplicationUser.Email,
+                    GivenName = item.UserDetailExtension.UserDetail.ApplicationUser.FirstName,
+                    SurName = item.UserDetailExtension.UserDetail.ApplicationUser.LastName,
+                    Batch = item.UserDetailExtension.Batch,
+                    ExamNumber = item.UserDetailExtension.ExamNumber,
+                    ExamYear = item.ExamYear,
+                    RegistrationNumber = item.UserDetailExtension.RegistrationNumber,
+                    RollNumber = item.UserDetailExtension.RollNumber
+                });
+
+            }
+
+        }
+
     }
 }

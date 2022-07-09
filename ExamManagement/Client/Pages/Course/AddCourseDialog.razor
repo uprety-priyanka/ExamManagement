@@ -1,0 +1,57 @@
+﻿@inherits AddCourseDialogBase
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <EditForm Model="model" OnValidSubmit="AddCourseRecord">
+            <DataAnnotationsValidator />
+            <MudContainer>
+                <MudTextField Label="Course Code" For="@(()=>model.CourseCode)" @bind-Value="model.CourseCode" InputType="InputType.Text" AutoFocus="true"></MudTextField>
+                <MudTextField Label="Course Name" For="@(()=>model.CourseName)" @bind-Value="model.CourseName" InputType="InputType.Text"></MudTextField>
+                <MudItem xs="12" md="12">
+                    <MudSelect T="int" Label="Faculty" MultiSelection="false" @bind-Value="model.FacultyId">
+                    @{
+                        foreach (var item in list)
+                        {
+                            <MudSelectItem T="int" Value="@item.Id">@item.FacultyName</MudSelectItem>
+                        }
+                    }
+						</MudSelect>
+					</MudItem>
+                    <MudItem xs="12" md="12">
+                    <MudSelect T="int" Label="Semester" MultiSelection="false" @bind-Value="model.SemesterTypeId">
+                            <MudSelectItem T="int" Value="SemesterTypeConstant.SEMESTERONE">First</MudSelectItem>
+                            <MudSelectItem T="int" Value="SemesterTypeConstant.SEMESTERTWO">Second</MudSelectItem>
+                            <MudSelectItem T="int" Value="SemesterTypeConstant.SEMESTERTHREE">Third</MudSelectItem>
+                            <MudSelectItem T="int" Value="SemesterTypeConstant.SEMESTERFOUR">Fourth</MudSelectItem>
+                            <MudSelectItem T="int" Value="SemesterTypeConstant.SEMESTERFIVE">Fifth</MudSelectItem>
+                            <MudSelectItem T="int" Value="SemesterTypeConstant.SEMESTERSIX">Sixth</MudSelectItem>
+                            <MudSelectItem T="int" Value="SemesterTypeConstant.SEMESTERSEVEN">Seventh</MudSelectItem>
+                            <MudSelectItem T="int" Value="SemesterTypeConstant.SEMESTEREIGHT">Eighth</MudSelectItem>
+						</MudSelect>
+					</MudItem>
+                <MudTextField Label="Concurrent Registration Course" For="@(()=>model.ConcurrentRegistrationCourse)" @bind-Value="model.ConcurrentRegistrationCourse" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Pre Requisite Course" For="@(()=>model.PreRequisiteCourse)" @bind-Value="model.PreRequisiteCourse" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Credit" For="@(()=>model.Credit)" @bind-Value="model.Credit" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Lecture" For="@(()=>model.Lecture)" @bind-Value="model.Lecture" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Tutorial" For="@(()=>model.Tutorial)" @bind-Value="model.Tutorial" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Practical" For="@(()=>model.Practical)" @bind-Value="model.Practical" InputType="InputType.Text"></MudTextField>
+                <MudCardActions>
+                    <MudSpacer />
+                    <MudButton Style="margin-right:4px;" ButtonType="ButtonType.Reset" OnClick="()=>MudDialog.Cancel()" Variant="Variant.Filled" Color="Color.Dark">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Disabled="submitButton" Variant="Variant.Filled" Color="Color.Primary">
+                        @if (submitButton)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Adding Course</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Add Course</MudText>
+                        }
+                    </MudButton>
+                </MudCardActions>
+
+            </MudContainer>
+        </EditForm>
+    </DialogContent>
+</MudDialog>

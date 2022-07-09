@@ -1,4 +1,6 @@
-﻿using Grpc.Protos;
+﻿using ExamManagement.Server.Entities;
+using ExamManagement.Shared.Account;
+using Grpc.Protos;
 
 namespace ExamManagement.Server.Services.Abstraction
 {
@@ -12,5 +14,8 @@ namespace ExamManagement.Server.Services.Abstraction
         Task<RegisterDepartmentAdminResultMessage> RegisterDepartmentAdminAsync(RegisterDepartmentAdminMessage registerDepartmentAdminMessage);
         Task<RegisterStudentResultMessage> RegisterStudentAsync(RegisterStudentMessage registerStudentMessage);
         Task LogOutUserAsync();
+        Task<List<DepartmentUserViewModel>> GetAllDepartmentAdminAsync(UserSearchMessage userSearchMessage);
+        Task<UserDeleteResultMessage> DeleteUserAsync(DepartmentAdminIdMessage departmentAdminIdMessage);
+        Task<List<UserDetailExtensionStudentTemporary>> GetStudentByBatchAsync(FacultySearchMessage message);
     }
 }

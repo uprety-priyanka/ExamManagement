@@ -1,0 +1,104 @@
+﻿@page "/course"
+@layout MainLayout
+@inherits CourseBase
+
+<br />
+<MudContainer>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" Style="text-align:right;" OnClick="OpenAddCourse">Add a Course</MudButton>
+</MudContainer>
+<br />
+<MudContainer>
+    <MudItem xs="12" md="12">
+        <MudSelect T="int" Label="Faculty" MultiSelection="false" Value="@FacultyId" ValueChanged="@((int newValue) => DoStuff(newValue))">
+            @{
+                foreach (var item in list)
+                {
+                        <MudSelectItem T="int" Value="@item.Id">@item.FacultyName</MudSelectItem>
+                }
+            }
+        </MudSelect>
+    </MudItem>
+    <br />
+    <MudTable Context="mycon" Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
+              Items="@_courses"
+              GroupBy="@_groupDefinition"
+              GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+              GroupFooterClass="mb-4"
+              Dense="true">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Course Records </MudText>
+            <MudSpacer />
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width: 60px;" />
+            <col />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>Course Code</MudTh>
+            <MudTh>Course Name</MudTh>
+            <MudTh>Concurrent Registration Course</MudTh>
+            <MudTh>Pre Requisite Course</MudTh>
+            <MudTh>Credit</MudTh>
+            <MudTh>Lecture</MudTh>
+            <MudTh>Tutorial</MudTh>
+            <MudTh>Practical</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <GroupHeaderTemplate>
+            <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{mycon.GroupName}: {mycon.Key}")</MudTh>
+        </GroupHeaderTemplate>
+        <RowTemplate>
+            <MudTd DataLabel="Course Code">@mycon.CourseCode</MudTd>
+            <MudTd DataLabel="Course Name">@mycon.CourseName</MudTd>
+            <MudTd DataLabel="Concurrent Registration Course">@mycon.ConcurrentRegistrationCourse</MudTd>
+            <MudTd DataLabel="Pre Requisite Course">@mycon.PreRequisiteCourse</MudTd>
+            <MudTd DataLabel="Credit">@mycon.Credit</MudTd>
+            <MudTd DataLabel="Lecture">@mycon.Lecture</MudTd>
+            <MudTd DataLabel="Tutorial">@mycon.Tutorial</MudTd>
+            <MudTd DataLabel="Practical">@mycon.Practical</MudTd>
+            <MudTd DataLabel="Actions">
+                <MudSpacer />
+                <MudTooltip Text="Edit Course">
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="(()=>OpenUpdateCourse(mycon))">
+                        <MudIcon Icon="fas fa-edit"></MudIcon>
+                    </MudButton>
+                </MudTooltip>
+                <MudTooltip Text="Delete Course">
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="(()=>OpenDeleteCourseDialog(mycon))">
+                        <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
+                    </MudButton>
+                </MudTooltip>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code
+{
+    public async Task OpenAddCourse()
+    {
+        var dialog = DialogService.Show<AddCourseDialog>("Add a course to a faculty");
+        var result = await dialog.Result;
+        await FetchData(FacultyId);
+    }
+
+    public async Task OpenUpdateCourse(CourseMessage message)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("info", message);
+        var facultyDelete = DialogService.Show<UpdateCourseDialog>($"Are you sure?", parameters);
+
+        var result = await facultyDelete.Result;
+        await FetchData(FacultyId);
+    }
+
+    public async Task OpenDeleteCourseDialog(CourseMessage message)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("info", message);
+        var courseDelete = DialogService.Show<DeleteCourseDialog>($"Are you sure?", parameters);
+
+        var result = await courseDelete.Result;
+        _navigate.NavigateTo("/course", true);
+    }
+}

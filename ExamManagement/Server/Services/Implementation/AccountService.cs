@@ -1,9 +1,11 @@
 ﻿using ExamManagement.Server.Data;
 using ExamManagement.Server.Entities;
 using ExamManagement.Server.Services.Abstraction;
+using ExamManagement.Shared.Account;
 using ExamManagement.Shared.Constants;
 using Grpc.Protos;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExamManagement.Server.Services.Implementation
 {
@@ -19,7 +21,7 @@ namespace ExamManagement.Server.Services.Implementation
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             RoleManager<IdentityRole> roleManager,
-            ApplicationContext dbContext) 
+            ApplicationContext dbContext)
         {
             _accessor = accessor;
             _userManager = userManager;
@@ -30,7 +32,7 @@ namespace ExamManagement.Server.Services.Implementation
 
         public async Task<CheckEmailResultMessage> CheckEmailAsync(CheckEmailMessage checkEmailMessage)
         {
-            return new CheckEmailResultMessage 
+            return new CheckEmailResultMessage
             {
                 Exists = _userManager.Users.Where(x => x.Email == checkEmailMessage.Email.Trim()).Any()
             };
@@ -44,14 +46,90 @@ namespace ExamManagement.Server.Services.Implementation
             };
         }
 
+        public async Task<UserDeleteResultMessage> DeleteUserAsync(DepartmentAdminIdMessage departmentAdminIdMessage)
+        {
+            var user = await _userManager.FindByIdAsync(departmentAdminIdMessage.UserId);
+            if (user == null)
+            {
+                return new UserDeleteResultMessage
+                {
+                    Success = false,
+                    Message = "No such user exists."
+                };
+            }
+            else
+            {
+                var result = await _userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return new UserDeleteResultMessage
+                    {
+                        Success = true,
+                        Message = "User has been deleted."
+                    };
+                }
+                else
+                {
+                    return new UserDeleteResultMessage
+                    {
+                        Success = false,
+                        Message = result.Errors.First().Description.ToString()
+                    };
+                }
+            }
+        }
+
+        public async Task<List<DepartmentUserViewModel>> GetAllDepartmentAdminAsync(UserSearchMessage userSearchMessage)
+        {
+            var result = new List<UserDetail>();
+
+            if (string.IsNullOrEmpty(userSearchMessage.Search))
+            {
+                result = await _dbContext.UserDetail
+                .Include(x => x.ApplicationUser)
+                .Include(x => x.Faculty)
+                .ToListAsync();
+            }
+            else
+            {
+                result = await _dbContext.UserDetail
+                .Include(x => x.ApplicationUser)
+                .Include(x => x.Faculty)
+                .Where(x => x.ApplicationUser.FirstName.ToLower().Contains(userSearchMessage.Search.ToLower().Trim()) ||
+                x.ApplicationUser.LastName.ToLower().Contains(userSearchMessage.Search.ToLower().Trim()) ||
+                x.ApplicationUser.Email.ToLower().Contains(userSearchMessage.Search.ToLower().Trim()) ||
+                x.ApplicationUser.UserName.ToLower().Contains(userSearchMessage.Search.ToLower().Trim()) ||
+                x.Faculty.FacultyName.ToLower().Contains(userSearchMessage.Search.ToLower().Trim()))
+                .ToListAsync();
+            }
+
+            List<DepartmentUserViewModel> list = new();
+
+            foreach (var item in result)
+            {
+                list.Add(new DepartmentUserViewModel
+                {
+                    Id = item.ApplicationUserId,
+                    Department = item.Faculty.FacultyName,
+                    GivenName = item.ApplicationUser.FirstName,
+                    SurName = item.ApplicationUser.LastName,
+                    Email = item.ApplicationUser.Email,
+                    UserName = item.ApplicationUser.UserName
+                });
+            }
+
+            return list;
+        }
+
         public async Task<CurrentUserMessage> GetCurrentUserAsync()
         {
-            if (_accessor.HttpContext.User.Identity.IsAuthenticated) 
+            if (_accessor.HttpContext.User.Identity.IsAuthenticated)
             {
                 var findUser = await _userManager.FindByNameAsync(_accessor.HttpContext.User.Identity.Name);
                 var findRole = await _userManager.GetRolesAsync(findUser);
 
-                return new CurrentUserMessage 
+                return new CurrentUserMessage
                 {
                     GivenName = findUser.FirstName,
                     SurName = findUser.LastName,
@@ -67,6 +145,53 @@ namespace ExamManagement.Server.Services.Implementation
             {
                 IsSuccess = false
             };
+        }
+
+        public async Task<List<UserDetailExtensionStudentTemporary>> GetStudentByBatchAsync(FacultySearchMessage message)
+        {
+
+            var distinctId = _dbContext.UserDetailExtensionStudentTemporary
+                .Include(x=>x.UserDetailExtension)
+                .Include(x=>x.UserDetailExtension.UserDetail)
+                .Where(x => x.UserDetailExtension.UserDetail.FacultyId == message.FacultyId)
+                .Select(x => x.UserDetailExtensionId).Distinct().ToList();
+
+            var list = new List<UserDetailExtensionStudentTemporary>();
+
+            foreach (var item in distinctId)
+            {
+
+                if (string.IsNullOrEmpty(message.Search.Trim()))
+                {
+                    var result = await _dbContext.UserDetailExtensionStudentTemporary
+                    .Include(x => x.UserDetailExtension)
+                    .Include(x => x.UserDetailExtension.UserDetail)
+                    .Include(x => x.UserDetailExtension.UserDetail.ApplicationUser)
+                    .Include(x => x.UserDetailExtension.UserDetail.Faculty)
+                    .Where(x => x.UserDetailExtensionId == item)
+                    .OrderBy(x => x.CreatedDate).FirstOrDefaultAsync();
+                    list.Add(result);
+                }
+                else 
+                {
+                    var result = await _dbContext.UserDetailExtensionStudentTemporary
+                    .Include(x => x.UserDetailExtension)
+                    .Include(x => x.UserDetailExtension.UserDetail)
+                    .Include(x => x.UserDetailExtension.UserDetail.ApplicationUser)
+                    .Include(x => x.UserDetailExtension.UserDetail.Faculty)
+                    .Where(x => x.UserDetailExtension.UserDetail.FacultyId == message.FacultyId)
+                    .Where(x => x.UserDetailExtension.UserDetail.ApplicationUser.FirstName.ToLower().Contains(message.Search.ToLower()) ||
+                    x.UserDetailExtension.UserDetail.ApplicationUser.LastName.ToLower().Contains(message.Search.ToLower()))
+                    .Where(x => x.UserDetailExtensionId == item)
+                    .OrderBy(x => x.CreatedDate).FirstOrDefaultAsync();
+                    if (result != null) 
+                    {
+                        list.Add(result);
+                    } 
+                }
+            }
+
+            return list;
         }
 
         public async Task<LoginUserResultMessage> LoginUserAsync(LoginUserMessage loginUserMessage)
@@ -160,7 +285,7 @@ namespace ExamManagement.Server.Services.Implementation
                 return new RegisterDepartmentAdminResultMessage
                 {
                     Success = registerUser.Succeeded,
-                    Message = registerUser.Errors.First().ToString()
+                    Message = registerUser.Errors.First().Description.ToString()
                 };
             }
 
@@ -168,7 +293,7 @@ namespace ExamManagement.Server.Services.Implementation
 
         public async Task<RegisterStudentResultMessage> RegisterStudentAsync(RegisterStudentMessage registerStudentMessage)
         {
-            var checkIfRoleExists = await _roleManager.RoleExistsAsync(RoleConstant.SUPERADMIN);
+            var checkIfRoleExists = await _roleManager.RoleExistsAsync(RoleConstant.STUDENT);
             if (!checkIfRoleExists)
             {
                 await _roleManager.CreateAsync(new IdentityRole
@@ -207,23 +332,36 @@ namespace ExamManagement.Server.Services.Implementation
                     RegistrationNumber = registerStudentMessage.RegistrationNumber,
                     ExamNumber = registerStudentMessage.ExamNumber,
                     UserDetailId = addFacultyResult.Entity.Id,
-                    CreatedDate = DateTime.UtcNow
+                    CreatedDate = DateTime.UtcNow,
+                    Batch = registerStudentMessage.Batch,
+                    RollNumber = registerStudentMessage.RollNumber
                 });
                 await _dbContext.SaveChangesAsync();
+
+
+                var addStudentDetailExtensionAboveResult = await _dbContext.UserDetailExtensionStudentTemporary.AddAsync(new UserDetailExtensionStudentTemporary
+                {
+                    UserDetailExtensionId = addRegistrationResult.Entity.Id,
+                    Semester = 1,
+                    CreatedDate = DateTime.UtcNow,
+                    ExamYear = registerStudentMessage.ExamYear,
+                });
+
+                await _dbContext.SaveChangesAsync();
+
 
                 return new RegisterStudentResultMessage
                 {
                     Success = true,
                     Message = ""
                 };
-
             }
             else
             {
                 return new RegisterStudentResultMessage
                 {
                     Success = false,
-                    Message = registerUser.Errors.First().ToString()
+                    Message = registerUser.Errors.First().Description.ToString()
                 };
             }
         }

@@ -1,0 +1,48 @@
+﻿@inherits AddStudentDialogBase
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <EditForm Model="model" OnValidSubmit="AddStudent">
+            <DataAnnotationsValidator />
+            <MudContainer>
+                <MudTextField Label="First Name" For="@(()=>model.FirstName)" @bind-Value="model.FirstName" InputType="InputType.Text" AutoFocus="true"></MudTextField>
+                <MudTextField Label="Last Name" For="@(()=>model.LastName)" @bind-Value="model.LastName" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Email Address" For="@(()=>model.Email)" @bind-Value="model.Email" InputType="InputType.Text"></MudTextField>
+                <MudItem xs="12" md="12">
+                    <MudSelect T="int" Label="Faculty" MultiSelection="false" @bind-Value="model.FacultyId">
+                        @{
+                            foreach (var item in list)
+                            {
+                                <MudSelectItem T="int" Value="@item.Id">@item.FacultyName</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudTextField Label="User Name" For="@(()=>model.UserName)" @bind-Value="model.UserName" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Registration Number" For="@(()=>model.RegistrationNumber)" @bind-Value="model.RegistrationNumber" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Exam Number" For="@(()=>model.ExamNumber)" @bind-Value="model.ExamNumber" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Exam Year" For="@(()=>model.ExamYear)" @bind-Value="model.ExamYear" InputType="InputType.Telephone"></MudTextField>
+                <MudTextField Label="Batch" For="@(()=>model.Batch)" @bind-Value="model.Batch" InputType="InputType.Telephone"></MudTextField>
+                <MudTextField Label="Roll Number" For="@(()=>model.RollNumber)" @bind-Value="model.RollNumber" InputType="InputType.Telephone"></MudTextField>
+                <MudTextField Label="Password" For="@(()=>model.Password)" @bind-Value="model.Password" InputType="InputType.Password" Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))"></MudTextField>
+                <MudTextField Label="Confirm Password" For="@(()=>model.ConfirmPassword)" @bind-Value="model.ConfirmPassword" InputType="InputType.Password"></MudTextField>
+                <MudCardActions>
+                    <MudSpacer />
+                    <MudButton Style="margin-right:4px;" ButtonType="ButtonType.Reset" OnClick="()=>MudDialog.Cancel()" Variant="Variant.Filled" Color="Color.Dark">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Disabled="submitButton" Variant="Variant.Filled" Color="Color.Primary">
+                        @if (submitButton)
+                        {
+                            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                            <MudText Class="ms-2">Adding Student</MudText>
+                        }
+                        else
+                        {
+                            <MudText>Add Student</MudText>
+                        }
+                    </MudButton>
+                </MudCardActions>
+
+            </MudContainer>
+        </EditForm>
+    </DialogContent>
+</MudDialog>

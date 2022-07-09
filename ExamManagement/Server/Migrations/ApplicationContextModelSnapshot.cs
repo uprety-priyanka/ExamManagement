@@ -126,12 +126,17 @@ namespace ExamManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("SemesterTypeId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("Tutorial")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FacultyId");
+
+                    b.HasIndex("SemesterTypeId");
 
                     b.ToTable("Course");
                 });
@@ -152,6 +157,103 @@ namespace ExamManagement.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Faculty");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ItemType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ItemTypeCategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemTypeCategoryId");
+
+                    b.ToTable("ItemType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ItemTypeCategoryId = 1,
+                            Name = "FIRST SEMESTER"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ItemTypeCategoryId = 1,
+                            Name = "SECOND SEMESTER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ItemTypeCategoryId = 1,
+                            Name = "THIRD SEMESTER"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ItemTypeCategoryId = 1,
+                            Name = "FOURTH SEMESTER"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ItemTypeCategoryId = 1,
+                            Name = "FIFTH SEMESTER"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ItemTypeCategoryId = 1,
+                            Name = "SIXTH SEMESTER"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ItemTypeCategoryId = 1,
+                            Name = "SEVENTH SEMESTER"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ItemTypeCategoryId = 1,
+                            Name = "EIGHTH SEMESTER"
+                        });
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ItemTypeCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedCategoryName")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ItemTypeCategory");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CategoryName = "Semester",
+                            NormalizedCategoryName = "SEMESTER"
+                        });
                 });
 
             modelBuilder.Entity("ExamManagement.Server.Entities.UserDetail", b =>
@@ -185,6 +287,9 @@ namespace ExamManagement.Server.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Batch")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TEXT");
 
@@ -196,6 +301,9 @@ namespace ExamManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("RollNumber")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("UserDetailId")
                         .HasColumnType("INTEGER");
 
@@ -206,7 +314,7 @@ namespace ExamManagement.Server.Migrations
                     b.ToTable("UserDetailExtension");
                 });
 
-            modelBuilder.Entity("ExamManagement.Server.Entities.UserDetailExtensionAbove", b =>
+            modelBuilder.Entity("ExamManagement.Server.Entities.UserDetailExtensionStudentTemporary", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -228,7 +336,7 @@ namespace ExamManagement.Server.Migrations
 
                     b.HasIndex("UserDetailExtensionId");
 
-                    b.ToTable("UserDetailExtensionAbove");
+                    b.ToTable("UserDetailExtensionStudentTemporary");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -367,7 +475,26 @@ namespace ExamManagement.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ExamManagement.Server.Entities.ItemType", "SemesterType")
+                        .WithMany()
+                        .HasForeignKey("SemesterTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Faculty");
+
+                    b.Navigation("SemesterType");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ItemType", b =>
+                {
+                    b.HasOne("ExamManagement.Server.Entities.ItemTypeCategory", "ItemTypeCategory")
+                        .WithMany()
+                        .HasForeignKey("ItemTypeCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ItemTypeCategory");
                 });
 
             modelBuilder.Entity("ExamManagement.Server.Entities.UserDetail", b =>
@@ -400,9 +527,9 @@ namespace ExamManagement.Server.Migrations
                     b.Navigation("UserDetail");
                 });
 
-            modelBuilder.Entity("ExamManagement.Server.Entities.UserDetailExtensionAbove", b =>
+            modelBuilder.Entity("ExamManagement.Server.Entities.UserDetailExtensionStudentTemporary", b =>
                 {
-                    b.HasOne("ExamManagement.Server.Entities.UserDetail", "UserDetailExtension")
+                    b.HasOne("ExamManagement.Server.Entities.UserDetailExtension", "UserDetailExtension")
                         .WithMany()
                         .HasForeignKey("UserDetailExtensionId")
                         .OnDelete(DeleteBehavior.Cascade)

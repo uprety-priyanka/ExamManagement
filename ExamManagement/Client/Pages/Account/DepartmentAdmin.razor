@@ -1,0 +1,101 @@
+﻿@page "/departmentadmin"
+@using ExamManagement.Client.Pages.Faculty
+@layout MainLayout
+
+@inherits DepartmentAdminBase
+
+<AuthorizeView>
+    <Authorized>
+        <br />
+        <MudContainer>
+            <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="OpenAddDepartmentAdminDialog" Style="text-align:right;">Add a Department Admin</MudButton>
+        </MudContainer>
+        <br />
+        <MudContainer>
+            <MudTable Context="mycon" Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
+                      Items="@_messages"
+                      GroupBy="@_groupDefinition"
+                      GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+                      GroupFooterClass="mb-4"
+                      Dense="true">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Department Admin Records </MudText>
+                    <MudSpacer />
+                    <MudTextField Immediate="true" T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                                  AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                </ToolBarContent>
+                <ColGroup>
+                    <col style="width: 60px;" />
+                    <col />
+                </ColGroup>
+                <HeaderContent>
+                    <MudTh>Last Name</MudTh>
+                    <MudTh>First Name</MudTh>
+                    <MudTh>Email Address</MudTh>
+                    <MudTh>User Name</MudTh>
+                    <MudTh>Actions</MudTh>
+                </HeaderContent>
+                <GroupHeaderTemplate>
+                    <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{mycon.GroupName}: {mycon.Key}")</MudTh>
+                </GroupHeaderTemplate>
+                <RowTemplate>
+                    <MudTd DataLabel="Sur Name">@mycon.SurName</MudTd>
+                    <MudTd DataLabel="Given Name">@mycon.GivenName</MudTd>
+                    <MudTd DataLabel="Email Address">@mycon.EmailAddress</MudTd>
+                    <MudTd DataLabel="User Name">@mycon.UserName</MudTd>
+                    <MudTd DataLabel="Actions">
+                        <MudSpacer />
+                        <MudTooltip Text="Delete Department Admin">
+                            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="(()=>OpenDeleteDepartmentAdminDialog(mycon))">
+                                <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
+                            </MudButton>
+                        </MudTooltip>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudContainer>
+    </Authorized>
+    <NotAuthorized>
+        @{
+            _navigationManager.NavigateTo("/account/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>
+
+@code
+{
+    public async Task OpenAddDepartmentAdminDialog()
+    {
+
+        var result = facultyGrpcClient.GetAllFaculty(new SearchMessage { Search = "" });
+
+        var list = new List<FacultyMessage>();
+
+        while (await result.ResponseStream.MoveNext())
+        {
+            list.Add(result.ResponseStream.Current);
+        }
+
+        if (list.Count <= 0)
+        {
+            var dialog = DialogService.Show<AddFacultyPopUpDialog>("No any faculty exists.");
+        }
+        else
+        {
+            var dialog = DialogService.Show<AddDepartmentAdminDialog>("Add a Department Admin");
+            var result2 = await dialog.Result;
+            await FetchData("");
+        }
+    }
+
+    public async Task OpenDeleteDepartmentAdminDialog(DepartmentUserMessage message)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("info", message);
+        var facultyDelete = DialogService.Show<DeleteDepartmentAdminDialog>($"Are you sure?", parameters);
+
+        var result = await facultyDelete.Result;
+        await FetchData("");
+    }
+
+}

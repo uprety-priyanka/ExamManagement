@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ExamManagement.Server.Entities
 {
-    public class UserDetailExtensionAbove
+    public class UserDetailExtensionStudentTemporary
     {
         [Key]
         public int Id { get; set; }
@@ -11,7 +11,7 @@ namespace ExamManagement.Server.Entities
         public int ExamYear { get; set; }
         [ForeignKey(nameof(UserDetailExtension))]
         public int UserDetailExtensionId { get; set; }
-        public UserDetail UserDetailExtension { get; set; }
+        public UserDetailExtension UserDetailExtension { get; set; }
         public DateTime CreatedDate { get; set; }
     }
 }

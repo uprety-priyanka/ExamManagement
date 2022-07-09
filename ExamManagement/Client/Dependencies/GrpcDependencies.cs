@@ -15,6 +15,13 @@ namespace ExamManagement.Client.Dependencies
             .ConfigurePrimaryHttpMessageHandler(
                 () => new GrpcWebHandler(new HttpClientHandler()));
 
+            services.AddGrpcClient<CourseGrpcService.CourseGrpcServiceClient>(options =>
+            {
+                options.Address = new Uri(BaseAddress);
+            })
+            .ConfigurePrimaryHttpMessageHandler(
+                () => new GrpcWebHandler(new HttpClientHandler()));
+
             services.AddGrpcClient<FacultyGrpcService.FacultyGrpcServiceClient>(options =>
             {
                 options.Address = new Uri(BaseAddress);

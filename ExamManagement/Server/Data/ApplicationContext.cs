@@ -13,6 +13,14 @@ namespace ExamManagement.Server.Data
         public DbSet<Faculty> Faculty { get; set; }
         public DbSet<UserDetail> UserDetail { get; set; }
         public DbSet<UserDetailExtension> UserDetailExtension { get; set; }
-        public DbSet<UserDetailExtensionAbove> UserDetailExtensionAbove { get; set; }
+        public DbSet<UserDetailExtensionStudentTemporary> UserDetailExtensionStudentTemporary { get; set; }
+        public DbSet<ItemTypeCategory> ItemTypeCategory { get; set; }
+        public DbSet<ItemType> ItemType { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+            builder.SeedAllData();
+        }
     }
 }

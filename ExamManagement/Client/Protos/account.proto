@@ -15,6 +15,56 @@ service AccountGrpcService
 	rpc RegisterDepartmentAdmin(RegisterDepartmentAdminMessage) returns (RegisterDepartmentAdminResultMessage);
 	rpc RegisterStudent(RegisterStudentMessage) returns(RegisterStudentResultMessage);
 	rpc LogOutUser(google.protobuf.Empty) returns (google.protobuf.Empty);
+	rpc GetDepartmentUser(UserSearchMessage) returns (stream DepartmentUserMessage);
+	rpc DeleteDepartmentAdminUser(DepartmentAdminIdMessage) returns (UserDeleteResultMessage);
+	rpc GetStudentByBatch(FacultySearchMessage) returns (stream StudentMessage);
+}
+
+message FacultySearchMessage
+{
+	int32 facultyId = 1;
+	string search = 2;
+}
+
+message StudentMessage
+{
+	int32 id = 1;
+	string givenName = 2;
+	string surName = 3;
+	string emailAddress = 4;
+	int32 batch= 5;
+	string examNumber = 6;
+	string applicationUserId = 7;
+	string RegistrationNumber = 8;
+	int32 semester = 9;
+	int32 examYear= 10;
+	int32 rollNumber = 11;
+}
+
+message UserDeleteResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message DepartmentAdminIdMessage
+{
+	string UserId = 1;
+}
+
+message UserSearchMessage 
+{
+	string search = 1;
+}
+
+message DepartmentUserMessage
+{
+	string id = 1;
+	string givenName = 2;
+	string surName = 3;
+	string userName = 5;
+	string emailAddress = 6;
+	string department = 7;
 }
 
 message CurrentUserMessage
@@ -107,6 +157,9 @@ message RegisterStudentMessage
 	int32 facultyId = 6;
 	string registrationNumber = 7;
 	string examNumber = 8;
+	int32 examYear = 9;
+	int32 batch = 10;
+	int32 rollNumber = 11;
 }
 
 message RegisterStudentResultMessage

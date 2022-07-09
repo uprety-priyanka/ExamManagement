@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="Protos\account.proto" />
+    <None Remove="Protos\course.proto" />
     <None Remove="Protos\faculty.proto" />
   </ItemGroup>
 
@@ -37,6 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\course.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\faculty.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\account.proto" GrpcServices="Server" />
   </ItemGroup>

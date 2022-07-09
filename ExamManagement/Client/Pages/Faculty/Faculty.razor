@@ -11,7 +11,7 @@
 <MudContainer>
     <MudTable Items="@facultyMessage" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
         <ToolBarContent>
-            <MudText Typo="Typo.h6">Event Records </MudText>
+            <MudText Typo="Typo.h6">Faculty Records </MudText>
             <MudSpacer />
             <MudTextField Immediate="true" T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
                           AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -26,12 +26,16 @@
             <MudTd DataLabel="Created Date">@item.CreatedDate.ToDateTime().AddHours(5).AddMinutes(45).ToString("ddd, dd MMM yyy")</MudTd>
             <MudTd DataLabel="Actions">
                 <MudSpacer />
-                <MudButton Variant="Variant.Filled" Color="Color.Success">
-                    <MudIcon Icon="@Icons.Filled.PinEnd"></MudIcon>
-                </MudButton>
-                <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenDeleteFacultyDialog(item))" Color="Color.Error">
-                    <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
-                </MudButton>
+                <MudTooltip Text="Edit Faculty">
+                    <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenUpadteFacultyDialog(item))" Color="Color.Success">
+                        <MudIcon Icon="fas fa-edit"></MudIcon>
+                    </MudButton>
+                </MudTooltip>
+                <MudTooltip Text="Delete Faculty">
+                    <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenDeleteFacultyDialog(item))" Color="Color.Error">
+                        <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
+                    </MudButton>
+                </MudTooltip>
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>
@@ -59,6 +63,16 @@
     {
         var dialog = DialogService.Show<AddFacultyDialog>("Add a faculty");
         var result = await dialog.Result;
+        await FetchData("");
+    }
+
+    public async Task OpenUpadteFacultyDialog(FacultyMessage message)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("info", message);
+        var facultyUpdate = DialogService.Show<UpdateFacultyDialog>($"Are you sure?", parameters);
+
+        var result = await facultyUpdate.Result;
         await FetchData("");
     }
 }

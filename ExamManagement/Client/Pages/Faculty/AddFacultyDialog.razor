@@ -6,7 +6,7 @@
         <EditForm Model="model" OnValidSubmit="AddFacultyRecord">
             <DataAnnotationsValidator />
             <MudContainer>
-                <MudTextField Label="Faculty Name" For="@(()=>model.FacultyName)" @bind-Value="model.FacultyName" InputType="InputType.Text"></MudTextField>
+                <MudTextField Label="Faculty Name" For="@(()=>model.FacultyName)" @bind-Value="model.FacultyName" InputType="InputType.Text" AutoFocus="true"></MudTextField>
                 <MudCardActions>
                     <MudSpacer />
                     <MudButton Style="margin-right:4px;" ButtonType="ButtonType.Reset" OnClick="()=>MudDialog.Cancel()" Variant="Variant.Filled" Color="Color.Dark">Cancel</MudButton>

@@ -15,6 +15,8 @@ namespace ExamManagement.Server.Entities
         public int UserDetailId { get; set; }
         public UserDetail UserDetail { get; set; }
         public DateTime CreatedDate { get; set; }
+        public int Batch { get; set; }
+        public int RollNumber { get; set; }
 
     }
 }

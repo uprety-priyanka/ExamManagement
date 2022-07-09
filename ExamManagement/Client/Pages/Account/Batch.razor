@@ -1,0 +1,86 @@
+﻿@page "/batch"
+@layout MainLayout
+@inherits BatchBase
+
+<br />
+<MudContainer>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" Style="text-align:right;" OnClick="OpenAddDepartmentAdminDialog">Add a New Student To a Faculty</MudButton>
+</MudContainer>
+<br />
+<MudContainer>
+    <MudItem xs="12" md="12">
+        <MudSelect T="int" Label="Faculty" Value="@FacultyId" ValueChanged="@((int newValue) => DoStuff(newValue))">
+            @{
+                foreach (var item in list)
+                {
+                    <MudSelectItem T="int" Value="@item.Id">@item.FacultyName</MudSelectItem>
+                }
+            }
+        </MudSelect>
+    </MudItem>
+    <br />
+    <MudTable Context="mycon" Hover="true" MultiSelection="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
+              Items="@_courses"
+              GroupBy="@_groupDefinition"
+              GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
+              GroupFooterClass="mb-4"
+              Dense="true">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Student Records </MudText>
+            <MudSpacer />
+            <MudTextField Immediate="true" T="string" ValueChanged="@(s=>OnSearch(s))" Placeholder="Search" Adornment="Adornment.Start"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <ColGroup>
+            <col style="width: 60px;" />
+            <col />
+        </ColGroup>
+        <HeaderContent>
+            <MudTh>Roll Number</MudTh>
+            <MudTh>Registration Number</MudTh>
+            <MudTh>Exam Number</MudTh>
+            <MudTh>First Name</MudTh>
+            <MudTh>Last Name</MudTh>
+            <MudTh>Email Address</MudTh>
+            <MudTh>Current Semester</MudTh>
+            <MudTh>Exam Year</MudTh>
+            <MudTh>Actions</MudTh>
+        </HeaderContent>
+        <GroupHeaderTemplate>
+            <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{mycon.GroupName}: {mycon.Key}")</MudTh>
+        </GroupHeaderTemplate>
+        <RowTemplate>
+            <MudTd DataLabel="Roll Number">@mycon.RollNumber</MudTd>
+            <MudTd DataLabel="Registration Number">@mycon.RegistrationNumber</MudTd>
+            <MudTd DataLabel="Exam Number">@mycon.ExamNumber</MudTd>
+            <MudTd DataLabel="First Name">@mycon.GivenName</MudTd>
+            <MudTd DataLabel="Last Name">@mycon.SurName</MudTd>
+            <MudTd DataLabel="Email Address">@mycon.EmailAddress</MudTd>
+            <MudTd DataLabel="Semester">@mycon.Semester</MudTd>
+            <MudTd DataLabel="Exam Year">@mycon.ExamYear</MudTd>
+            <MudTd DataLabel="Actions">
+                <MudSpacer />
+                <MudTooltip Text="Edit Student Record">
+                    <MudButton Variant="Variant.Filled" Color="Color.Success">
+                        <MudIcon Icon="fas fa-edit"></MudIcon>
+                    </MudButton>
+                </MudTooltip>
+                <MudTooltip Text="Delete Student Record">
+                    <MudButton Variant="Variant.Filled" Color="Color.Error">
+                        <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
+                    </MudButton>
+                </MudTooltip>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+</MudContainer>
+
+@code
+{
+    public async Task OpenAddDepartmentAdminDialog()
+    {
+        var dialog = DialogService.Show<AddStudentDialog>("Add a Student");
+        var result2 = await dialog.Result;
+        await FetchData(FacultyId, "");
+    }
+}
