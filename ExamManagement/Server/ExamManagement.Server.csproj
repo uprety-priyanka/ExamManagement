@@ -10,6 +10,8 @@
     <None Remove="Protos\account.proto" />
     <None Remove="Protos\course.proto" />
     <None Remove="Protos\faculty.proto" />
+    <None Remove="Protos\forms.proto" />
+    <None Remove="Protos\result.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,6 +27,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.6">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -41,6 +44,8 @@
     <Protobuf Include="Protos\course.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\faculty.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\account.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\forms.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\result.proto" GrpcServices="Server" />
   </ItemGroup>
 
 

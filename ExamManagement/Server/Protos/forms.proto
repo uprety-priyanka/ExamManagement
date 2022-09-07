@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+option csharp_namespace = "Grpc.Protos";
+
+package ExamManagement.Package;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+service ExamFormGrpcService
+{
+	rpc PreFillForm (ApplicationUserIdMessage) returns (PreFillFormResultMessage);
+	rpc FillForm (FillFormMessage) returns (FillFormResultMessage);
+}
+
+message PreFillFormResultMessage 
+{
+	repeated PreFillRegularFormResultSupportMessage PreFillRegularFormResultSupportMessages = 1;
+	repeated PreFillConcurrentFormResultSupportMessage PreFillConcurrentFormResultSupportMessages = 2;
+	repeated PreFillPrerequisiteFormResultSupportMessage PreFillPrerequisiteFormResultSupportMessages = 3;
+	repeated PreFillBackFormResultSupportMessage PreFillBackFormResultSupportMessages = 4;
+}
+
+message ApplicationUserIdMessage 
+{
+	string applicationUserId = 1;
+}
+
+message PreFillRegularFormResultSupportMessage 
+{
+	int32 courseId = 1;
+	string CourseName = 2;
+}
+
+message PreFillConcurrentFormResultSupportMessage 
+{
+	int32 courseId = 1;
+	string CourseName = 2;
+}
+
+message PreFillPrerequisiteFormResultSupportMessage
+{
+	int32 courseId = 1;
+	string CourseName = 2;
+}
+
+message PreFillBackFormResultSupportMessage
+{
+	int32 courseId = 1;
+	string CourseName = 2;
+}
+
+message FillFormResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message FillFormMessage
+{
+	repeated FillRegularFormSupportMessage FillRegularFormSupportMessages = 1;
+	repeated FillConcurrentFormSupportMessage FillConcurrentFormSupportMessages = 2;
+	repeated FillPrerequisiteFormSupportMessage FillPrerequisiteFormSupportMessages = 3;
+	repeated FillBackFormSupportMessage FillBackFormSupportMessages = 4;
+}
+
+message FillRegularFormSupportMessage 
+{
+	int32 courseId = 1;
+}
+
+message FillConcurrentFormSupportMessage 
+{
+	int32 courseId = 1;
+}
+
+message FillPrerequisiteFormSupportMessage
+{
+	int32 courseId = 1;
+}
+
+message FillBackFormSupportMessage
+{
+	int32 courseId = 1;
+}

@@ -16,6 +16,13 @@ namespace ExamManagement.Server.Data
         public DbSet<UserDetailExtensionStudentTemporary> UserDetailExtensionStudentTemporary { get; set; }
         public DbSet<ItemTypeCategory> ItemTypeCategory { get; set; }
         public DbSet<ItemType> ItemType { get; set; }
+        public DbSet<Result> Result { get; set; }
+        public DbSet<ResultExtension> ResultExtension { get; set; }
+        public DbSet<ExamForm> ExamForm { get; set; }
+        public DbSet<ExamFormRegular> ExamFormRegular { get; set; }
+        public DbSet<ExamFormConcurrent> ExamFormConcurrent { get; set; }
+        public DbSet<ExamFormPrerequisite> ExamFormPrerequisite { get; set; }
+        public DbSet<ExamFormBack> ExamFormBack { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

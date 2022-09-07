@@ -21,10 +21,14 @@ namespace ExamManagement.Client.Codes.Account
 
         public async Task DeleteDepartmentAdmin() 
         {
+            DeleteButton = true;
+
             var result = await _grpcClient.DeleteDepartmentAdminUserAsync(new DepartmentAdminIdMessage 
             {
                 UserId = info.Id
             });
+
+            DeleteButton = false;
 
             if (result.Success)
             {

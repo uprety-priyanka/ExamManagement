@@ -92,6 +92,8 @@ app.UseEndpoints(endpoints =>
     endpoints.MapGrpcService<AccountGrpcPipeline>().EnableGrpcWeb().RequireCors("AllowAll");
     endpoints.MapGrpcService<CourseGrpcPipeline>().EnableGrpcWeb().RequireCors("AllowAll");
     endpoints.MapGrpcService<FacultyGrpcPipeline>().EnableGrpcWeb().RequireCors("AllowAll");
+    endpoints.MapGrpcService<ResultGrpcPipeline>().EnableGrpcWeb().RequireCors("AllowAll");
+    endpoints.MapGrpcService<ExamFormGrpcPipeline>().EnableGrpcWeb().RequireCors("AllowAll");
     endpoints.MapRazorPages();
     endpoints.MapDefaultControllerRoute();
     endpoints.MapFallbackToFile("index.html");

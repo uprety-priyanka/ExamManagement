@@ -3,17 +3,21 @@
 @inherits CourseBase
 
 <br />
-<MudContainer>
-    <MudButton Variant="@Variant.Filled" Color="Color.Primary" Style="text-align:right;" OnClick="OpenAddCourse">Add a Course</MudButton>
-</MudContainer>
-<br />
+
+@if (userRole == RoleConstant.SUPERADMIN || userRole == RoleConstant.DEPARTMENTADMIN) 
+{
+    <MudContainer>
+        <MudButton Variant="@Variant.Filled" Color="Color.Primary" Style="text-align:right;" OnClick="OpenAddCourse">Add a Course</MudButton>
+    </MudContainer>
+    <br />
+}
 <MudContainer>
     <MudItem xs="12" md="12">
         <MudSelect T="int" Label="Faculty" MultiSelection="false" Value="@FacultyId" ValueChanged="@((int newValue) => DoStuff(newValue))">
             @{
                 foreach (var item in list)
                 {
-                        <MudSelectItem T="int" Value="@item.Id">@item.FacultyName</MudSelectItem>
+                    <MudSelectItem T="int" Value="@item.Id">@item.FacultyName</MudSelectItem>
                 }
             }
         </MudSelect>
@@ -58,16 +62,20 @@
             <MudTd DataLabel="Practical">@mycon.Practical</MudTd>
             <MudTd DataLabel="Actions">
                 <MudSpacer />
-                <MudTooltip Text="Edit Course">
-                    <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="(()=>OpenUpdateCourse(mycon))">
-                        <MudIcon Icon="fas fa-edit"></MudIcon>
-                    </MudButton>
-                </MudTooltip>
-                <MudTooltip Text="Delete Course">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="(()=>OpenDeleteCourseDialog(mycon))">
-                        <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
-                    </MudButton>
-                </MudTooltip>
+
+                @if (userRole == RoleConstant.SUPERADMIN || userRole == RoleConstant.DEPARTMENTADMIN) 
+                {
+                    <MudTooltip Text="Edit Course">
+                        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="(()=>OpenUpdateCourse(mycon))">
+                            <MudIcon Icon="fas fa-edit"></MudIcon>
+                        </MudButton>
+                    </MudTooltip>
+                    <MudTooltip Text="Delete Course">
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="(()=>OpenDeleteCourseDialog(mycon))">
+                            <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
+                        </MudButton>
+                    </MudTooltip>
+                } 
             </MudTd>
         </RowTemplate>
     </MudTable>
@@ -77,9 +85,29 @@
 {
     public async Task OpenAddCourse()
     {
-        var dialog = DialogService.Show<AddCourseDialog>("Add a course to a faculty");
-        var result = await dialog.Result;
-        await FetchData(FacultyId);
+        try
+        {
+            var result = facultyGrpcClient.GetAllFaculty(new SearchMessage { Search = "" });
+
+            var list = new List<FacultyMessage>();
+
+            while (await result.ResponseStream.MoveNext())
+            {
+                list.Add(result.ResponseStream.Current);
+            }
+
+            if (list.Count <= 0)
+            {
+                var dialog = DialogService.Show<AddFacultyPopUpDialog>("No any faculty exists.");
+            }
+            else
+            {
+                var dialog = DialogService.Show<AddCourseDialog>("Add a course to a faculty");
+                var result2 = await dialog.Result;
+                await FetchData(FacultyId);
+            }
+        }
+        catch (Exception) { }
     }
 
     public async Task OpenUpdateCourse(CourseMessage message)

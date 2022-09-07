@@ -1,0 +1,124 @@
+﻿syntax = "proto3";
+option csharp_namespace = "Grpc.Protos";
+
+package ExamManagement.Package;
+
+import "google/protobuf/empty.proto";
+
+service ResultGrpcService
+{
+	rpc GetResultPerFaculty(GetResultPerFacultyMessage) returns (stream GetResultPerFacultyResultMessage);
+	rpc GetResultPerStudent(GetResultPerStudentMessage) returns (GetResultPerStudentResultMessage);
+	rpc AddResult(AddResultMessage) returns (AddResultResultMessage);
+	rpc UpdateResult(UpdateResultMessage) returns (UpdateResultResultMessage);
+	rpc DeleteResult(DeleteResultMessage) returns (DeleteResultResultMessage);
+	rpc GetAllResult(google.protobuf.Empty) returns (stream GetAllResultResultMessage);
+}
+
+message GetAllResultResultMessage
+{
+	int32 semester = 1;
+	int32 examYear = 2;
+	string registrationNumber = 3;
+	string examNumber = 4;
+	int32 Batch = 5;
+	int32 rollNumber = 6;
+	string firstName = 7;
+	string LastName = 8;
+	repeated string courseName = 9;
+	repeated string grade = 10;
+	double sGPA = 11;
+	string faculty = 12;
+}
+
+message DeleteResultResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message DeleteResultMessage
+{
+	int32 UserDetailExtensionStudentTemporaryId = 1;
+}
+
+message UpdateResultResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message UpdateResultMessage
+{
+	int32 resultExtensionId = 1;
+	int32 courseId = 2;
+	string grade = 3;
+	int32 resultId = 4;
+}
+
+message AddResultMessage 
+{
+	int32 CourseId = 1;
+	string grade = 2;
+	int32 UserDetailExtensionStudentTemporaryId = 3;
+}
+
+message AddResultResultMessage 
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message GetResultPerStudentMessage
+{
+	string applicationUserId = 1;
+}
+
+message GetResultPerStudentResultMessage
+{
+	string firstName = 1;
+	string lastName = 2;
+	int32 examYear = 3;
+	string registrationNumber = 4;
+	string examNumber = 5;
+	int32 batch = 6;
+	int32 rollNumber = 7;
+	double sGPA = 8;
+	repeated GetResultPerStudentResultSupportMessage GetResultPerStudentResultSupportMessages = 10;
+}
+
+message GetResultPerStudentResultSupportMessage 
+{
+	string courseName = 1;
+	string grade = 2;
+	int32 semester = 3;
+	int32 courseId = 4;
+}
+
+message GetResultPerFacultyMessage
+{
+	int32 FacultyId = 1;
+	string search = 2;
+}
+
+message GetResultPerFacultyResultMessage 
+{
+	repeated GetResultPerFacultyResultSupportMessage GetResultPerFacultyResultSupportMessages = 1;
+	int32 examYear = 2;
+	string registrationNumber = 3;
+	string examNumber = 4;
+	int32 Batch = 5;
+	int32 rollNumber = 6;
+	string firstName = 7;
+	string LastName = 8;
+	double sGPA = 9;
+	int32 UserDetailExtensionStudentTemporaryId = 10;
+}
+
+message GetResultPerFacultyResultSupportMessage
+{
+	int32 semester = 1;
+	string courseName = 2;
+	string grade = 3;
+	int32 courseId = 4;
+}

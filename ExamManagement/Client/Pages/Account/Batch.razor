@@ -3,10 +3,13 @@
 @inherits BatchBase
 
 <br />
+@if(userRole == RoleConstant.SUPERADMIN || userRole == RoleConstant.DEPARTMENTADMIN)
+{
 <MudContainer>
-    <MudButton Variant="@Variant.Filled" Color="Color.Primary" Style="text-align:right;" OnClick="OpenAddDepartmentAdminDialog">Add a New Student To a Faculty</MudButton>
+    <MudButton Variant="@Variant.Filled" Color="Color.Primary" Style="text-align:right;" OnClick="OpenAddStudentnDialog">Add a New Student To a Faculty</MudButton>
 </MudContainer>
 <br />
+
 <MudContainer>
     <MudItem xs="12" md="12">
         <MudSelect T="int" Label="Faculty" Value="@FacultyId" ValueChanged="@((int newValue) => DoStuff(newValue))">
@@ -19,7 +22,15 @@
         </MudSelect>
     </MudItem>
     <br />
-    <MudTable Context="mycon" Hover="true" MultiSelection="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
+        @if (studentMessages.Count <= 0) 
+        {
+        }
+        else
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpgradeSemester">Upgrade Semester</MudButton>
+            <br />
+        }
+        <MudTable Context="mycon" Hover="true" MultiSelection="true" @bind-SelectedItems="studentMessages" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
               Items="@_courses"
               GroupBy="@_groupDefinition"
               GroupHeaderStyle="background-color:var(--mud-palette-background-grey)"
@@ -48,39 +59,62 @@
         </HeaderContent>
         <GroupHeaderTemplate>
             <MudTh Class="mud-table-cell-custom-group" colspan="5">@($"{mycon.GroupName}: {mycon.Key}")</MudTh>
-        </GroupHeaderTemplate>
-        <RowTemplate>
-            <MudTd DataLabel="Roll Number">@mycon.RollNumber</MudTd>
-            <MudTd DataLabel="Registration Number">@mycon.RegistrationNumber</MudTd>
-            <MudTd DataLabel="Exam Number">@mycon.ExamNumber</MudTd>
-            <MudTd DataLabel="First Name">@mycon.GivenName</MudTd>
-            <MudTd DataLabel="Last Name">@mycon.SurName</MudTd>
-            <MudTd DataLabel="Email Address">@mycon.EmailAddress</MudTd>
-            <MudTd DataLabel="Semester">@mycon.Semester</MudTd>
-            <MudTd DataLabel="Exam Year">@mycon.ExamYear</MudTd>
-            <MudTd DataLabel="Actions">
-                <MudSpacer />
-                <MudTooltip Text="Edit Student Record">
-                    <MudButton Variant="Variant.Filled" Color="Color.Success">
-                        <MudIcon Icon="fas fa-edit"></MudIcon>
-                    </MudButton>
-                </MudTooltip>
-                <MudTooltip Text="Delete Student Record">
-                    <MudButton Variant="Variant.Filled" Color="Color.Error">
-                        <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
-                    </MudButton>
-                </MudTooltip>
-            </MudTd>
-        </RowTemplate>
-    </MudTable>
-</MudContainer>
+            </GroupHeaderTemplate>
+            <RowTemplate>
+                <MudTd DataLabel="Roll Number">@mycon.RollNumber</MudTd>
+                <MudTd DataLabel="Registration Number">@mycon.RegistrationNumber</MudTd>
+                <MudTd DataLabel="Exam Number">@mycon.ExamNumber</MudTd>
+                <MudTd DataLabel="First Name">@mycon.GivenName</MudTd>
+                <MudTd DataLabel="Last Name">@mycon.SurName</MudTd>
+                <MudTd DataLabel="Email Address">@mycon.EmailAddress</MudTd>
+                <MudTd DataLabel="Semester">@mycon.Semester</MudTd>
+                <MudTd DataLabel="Exam Year">@mycon.ExamYear</MudTd>
+                <MudTd DataLabel="Actions">
+                    <MudSpacer />
+                    <MudTooltip Text="Delete Student Record">
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="(()=>OpenDeleteStudentDialog(mycon))">
+                            <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
+                        </MudButton>
+                    </MudTooltip>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudContainer>
+    }
 
-@code
-{
-    public async Task OpenAddDepartmentAdminDialog()
+    @code
     {
-        var dialog = DialogService.Show<AddStudentDialog>("Add a Student");
-        var result2 = await dialog.Result;
+    public async Task OpenAddStudentnDialog()
+    {
+
+        var result = facultyGrpcClient.GetAllFaculty(new SearchMessage { Search = "" });
+
+        var list = new List<FacultyMessage>();
+
+        while (await result.ResponseStream.MoveNext())
+        {
+            list.Add(result.ResponseStream.Current);
+        }
+
+        if (list.Count <= 0)
+        {
+            var dialog = DialogService.Show<AddFacultyPopUpDialog>("No any faculty exists.");
+        }
+        else
+        {
+            var dialog = DialogService.Show<AddStudentDialog>("Add a Student");
+            var result2 = await dialog.Result;
+            await FetchData(FacultyId, "");
+        }
+    }
+
+    public async Task OpenDeleteStudentDialog(StudentMessage message)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("info", message);
+        var studentDelete = DialogService.Show<DeleteStudentDialog>($"Are you sure?", parameters);
+
+        var result = await studentDelete.Result;
         await FetchData(FacultyId, "");
     }
 }

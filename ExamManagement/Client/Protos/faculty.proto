@@ -8,11 +8,12 @@ import "google/protobuf/timestamp.proto";
 
 service FacultyGrpcService
 {
-	rpc GetAllFaculty(SearchMessage) returns(stream FacultyMessage);
-	rpc GetFacultyById(IdMessage) returns(FacultyMessage);
+	rpc GetAllFaculty(SearchMessage) returns (stream FacultyMessage);
+	rpc GetFacultyById(IdMessage) returns (FacultyMessage);
 	rpc AddFaculty(AddFacultyMessage) returns (AddFacultyResultMessage);
 	rpc DeleteFaculty(IdMessage) returns (DeleteFacultyResultMessage);
-	rpc UpdateFaculty(UpdateFacultyMessage) returns(UpdateFacultyResultMessage);
+	rpc UpdateFaculty(UpdateFacultyMessage) returns (UpdateFacultyResultMessage);
+	rpc GetFacultyIdForCurrentlyLoggedInDepartmentUser(google.protobuf.Empty) returns (IdMessage);
 }
 
 message DeleteFacultyResultMessage

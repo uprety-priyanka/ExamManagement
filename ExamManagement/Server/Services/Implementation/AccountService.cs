@@ -46,6 +46,40 @@ namespace ExamManagement.Server.Services.Implementation
             };
         }
 
+        public async Task<DeleteStudentResultMessage> DeleteStudentAsync(StudentIdMessage studentIdMessage)
+        {
+            var user = await _userManager.FindByIdAsync(studentIdMessage.Id);
+            if (user == null)
+            {
+                return new DeleteStudentResultMessage
+                {
+                    Success = false,
+                    Message = "No such user exists."
+                };
+            }
+            else
+            {
+                var result = await _userManager.DeleteAsync(user);
+
+                if (result.Succeeded)
+                {
+                    return new DeleteStudentResultMessage
+                    {
+                        Success = true,
+                        Message = "User has been deleted."
+                    };
+                }
+                else
+                {
+                    return new DeleteStudentResultMessage
+                    {
+                        Success = false,
+                        Message = result.Errors.First().Description.ToString()
+                    };
+                }
+            }
+        }
+
         public async Task<UserDeleteResultMessage> DeleteUserAsync(DepartmentAdminIdMessage departmentAdminIdMessage)
         {
             var user = await _userManager.FindByIdAsync(departmentAdminIdMessage.UserId);
@@ -84,12 +118,23 @@ namespace ExamManagement.Server.Services.Implementation
         {
             var result = new List<UserDetail>();
 
+            var userDetailList = new List<UserDetail>();
+
             if (string.IsNullOrEmpty(userSearchMessage.Search))
             {
                 result = await _dbContext.UserDetail
                 .Include(x => x.ApplicationUser)
                 .Include(x => x.Faculty)
                 .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    if (await _userManager.IsInRoleAsync(item.ApplicationUser, RoleConstant.DEPARTMENTADMIN))
+                    {
+                        userDetailList.Add(item);
+                    }
+                }
+
             }
             else
             {
@@ -102,11 +147,20 @@ namespace ExamManagement.Server.Services.Implementation
                 x.ApplicationUser.UserName.ToLower().Contains(userSearchMessage.Search.ToLower().Trim()) ||
                 x.Faculty.FacultyName.ToLower().Contains(userSearchMessage.Search.ToLower().Trim()))
                 .ToListAsync();
+
+                foreach (var item in result)
+                {
+                    if (await _userManager.IsInRoleAsync(item.ApplicationUser, RoleConstant.DEPARTMENTADMIN))
+                    {
+                        userDetailList.Add(item);
+                    }
+                }
+
             }
 
             List<DepartmentUserViewModel> list = new();
 
-            foreach (var item in result)
+            foreach (var item in userDetailList)
             {
                 list.Add(new DepartmentUserViewModel
                 {
@@ -151,8 +205,8 @@ namespace ExamManagement.Server.Services.Implementation
         {
 
             var distinctId = _dbContext.UserDetailExtensionStudentTemporary
-                .Include(x=>x.UserDetailExtension)
-                .Include(x=>x.UserDetailExtension.UserDetail)
+                .Include(x => x.UserDetailExtension)
+                .Include(x => x.UserDetailExtension.UserDetail)
                 .Where(x => x.UserDetailExtension.UserDetail.FacultyId == message.FacultyId)
                 .Select(x => x.UserDetailExtensionId).Distinct().ToList();
 
@@ -169,10 +223,10 @@ namespace ExamManagement.Server.Services.Implementation
                     .Include(x => x.UserDetailExtension.UserDetail.ApplicationUser)
                     .Include(x => x.UserDetailExtension.UserDetail.Faculty)
                     .Where(x => x.UserDetailExtensionId == item)
-                    .OrderBy(x => x.CreatedDate).FirstOrDefaultAsync();
+                    .OrderByDescending(x => x.CreatedDate).FirstOrDefaultAsync();
                     list.Add(result);
                 }
-                else 
+                else
                 {
                     var result = await _dbContext.UserDetailExtensionStudentTemporary
                     .Include(x => x.UserDetailExtension)
@@ -184,14 +238,48 @@ namespace ExamManagement.Server.Services.Implementation
                     x.UserDetailExtension.UserDetail.ApplicationUser.LastName.ToLower().Contains(message.Search.ToLower()))
                     .Where(x => x.UserDetailExtensionId == item)
                     .OrderBy(x => x.CreatedDate).FirstOrDefaultAsync();
-                    if (result != null) 
+                    if (result != null)
                     {
                         list.Add(result);
-                    } 
+                    }
                 }
             }
 
             return list;
+        }
+
+        public async Task<List<UserDetailExtensionStudentTemporary>> GetStudentInFacultyAsync(AccFacultyIdMessage facultyId)
+        {
+
+
+
+            var students = await _dbContext.UserDetailExtensionStudentTemporary
+                .Include(x => x.UserDetailExtension)
+                .Include(x => x.UserDetailExtension.UserDetail)
+                .Include(x => x.UserDetailExtension.UserDetail.ApplicationUser)
+                .OrderByDescending(x => x.UserDetailExtensionId)
+                .Where(x => x.UserDetailExtension.UserDetail.FacultyId == facultyId.FacultyId)
+                .Select(x=> x.UserDetailExtensionId)
+                .Distinct()
+                .ToListAsync();
+
+            var list = new List<UserDetailExtensionStudentTemporary>();
+
+            foreach (var item in students)
+            {
+                var applicationUser = await _dbContext.UserDetailExtensionStudentTemporary
+                    .Include(x => x.UserDetailExtension)
+                    .Include(x => x.UserDetailExtension.UserDetail)
+                    .Include(x => x.UserDetailExtension.UserDetail.ApplicationUser)
+                    .Where(x => x.UserDetailExtensionId == item)
+                    .FirstOrDefaultAsync();
+
+                list.Add(applicationUser);
+            }
+
+            return list;
+
+
         }
 
         public async Task<LoginUserResultMessage> LoginUserAsync(LoginUserMessage loginUserMessage)
@@ -404,6 +492,49 @@ namespace ExamManagement.Server.Services.Implementation
                 {
                     Success = registerUser.Succeeded,
                     Message = registerUser.Errors.First().ToString()
+                };
+            }
+        }
+
+        public async Task<UpgradeStudentResultmessage> UpgradeSemesterAsync(UpgradeStudentmessage studentmessage)
+        {
+            var findStudent = await _dbContext.UserDetailExtensionStudentTemporary
+                .Where(x => x.Id == studentmessage.UserDetailExtensionTemporayId)
+                .FirstOrDefaultAsync();
+
+            if (findStudent is null)
+            {
+                return new UpgradeStudentResultmessage
+                {
+                    Success = false,
+                    Message = "Couldn't find student."
+                };
+            }
+
+            var addNewStudent = await _dbContext.UserDetailExtensionStudentTemporary.AddAsync(new UserDetailExtensionStudentTemporary
+            {
+                UserDetailExtensionId = findStudent.UserDetailExtensionId,
+                CreatedDate = DateTime.UtcNow,
+                ExamYear = DateTime.Now.Year,
+                Semester = studentmessage.Semester+1,
+            });
+
+            var count = await _dbContext.SaveChangesAsync();
+
+            if (count > 0)
+            {
+                return new UpgradeStudentResultmessage
+                {
+                    Success = true,
+                    Message = $"Student was successfuly upgraded to semester {studentmessage.Semester}."
+                };
+            }
+            else
+            {
+                return new UpgradeStudentResultmessage
+                {
+                    Success = false,
+                    Message = "Could not upgrade due to internal reasons."
                 };
             }
         }

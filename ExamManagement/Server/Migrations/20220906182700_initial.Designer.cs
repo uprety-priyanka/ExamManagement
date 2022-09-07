@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ExamManagement.Server.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20220707102324_AddedBatch")]
-    partial class AddedBatch
+    [Migration("20220906182700_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -143,6 +143,109 @@ namespace ExamManagement.Server.Migrations
                     b.ToTable("Course");
                 });
 
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamForm", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("FormFilledDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("UserDetailExtensionStudentTemporaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserDetailExtensionStudentTemporaryId");
+
+                    b.ToTable("ExamForm");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamFormBack", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ExamFormId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("ExamFormId");
+
+                    b.ToTable("ExamFormBack");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamFormConcurrent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ExamFormId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("ExamFormId");
+
+                    b.ToTable("ExamFormConcurrent");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamFormPrerequisite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ExamFormId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("ExamFormId");
+
+                    b.ToTable("ExamFormPrerequisite");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamFormRegular", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ExamFormId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("ExamFormId");
+
+                    b.ToTable("ExamFormRegular");
+                });
+
             modelBuilder.Entity("ExamManagement.Server.Entities.Faculty", b =>
                 {
                     b.Property<int>("Id")
@@ -258,6 +361,47 @@ namespace ExamManagement.Server.Migrations
                         });
                 });
 
+            modelBuilder.Entity("ExamManagement.Server.Entities.Result", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserDetailExtensionStudentTemporaryId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserDetailExtensionStudentTemporaryId");
+
+                    b.ToTable("Result");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ResultExtension", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Grade")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ResultId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("ResultId");
+
+                    b.ToTable("ResultExtension");
+                });
+
             modelBuilder.Entity("ExamManagement.Server.Entities.UserDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -303,6 +447,9 @@ namespace ExamManagement.Server.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("RollNumber")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("UserDetailId")
                         .HasColumnType("INTEGER");
 
@@ -313,7 +460,7 @@ namespace ExamManagement.Server.Migrations
                     b.ToTable("UserDetailExtension");
                 });
 
-            modelBuilder.Entity("ExamManagement.Server.Entities.UserDetailExtensionAbove", b =>
+            modelBuilder.Entity("ExamManagement.Server.Entities.UserDetailExtensionStudentTemporary", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -335,7 +482,7 @@ namespace ExamManagement.Server.Migrations
 
                     b.HasIndex("UserDetailExtensionId");
 
-                    b.ToTable("UserDetailExtensionAbove");
+                    b.ToTable("UserDetailExtensionStudentTemporary");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -485,6 +632,93 @@ namespace ExamManagement.Server.Migrations
                     b.Navigation("SemesterType");
                 });
 
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamForm", b =>
+                {
+                    b.HasOne("ExamManagement.Server.Entities.UserDetailExtensionStudentTemporary", "UserDetailExtensionStudentTemporary")
+                        .WithMany()
+                        .HasForeignKey("UserDetailExtensionStudentTemporaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserDetailExtensionStudentTemporary");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamFormBack", b =>
+                {
+                    b.HasOne("ExamManagement.Server.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExamManagement.Server.Entities.ExamForm", "ExamForm")
+                        .WithMany()
+                        .HasForeignKey("ExamFormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("ExamForm");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamFormConcurrent", b =>
+                {
+                    b.HasOne("ExamManagement.Server.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExamManagement.Server.Entities.ExamForm", "ExamForm")
+                        .WithMany()
+                        .HasForeignKey("ExamFormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("ExamForm");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamFormPrerequisite", b =>
+                {
+                    b.HasOne("ExamManagement.Server.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExamManagement.Server.Entities.ExamForm", "ExamForm")
+                        .WithMany()
+                        .HasForeignKey("ExamFormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("ExamForm");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ExamFormRegular", b =>
+                {
+                    b.HasOne("ExamManagement.Server.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExamManagement.Server.Entities.ExamForm", "ExamForm")
+                        .WithMany()
+                        .HasForeignKey("ExamFormId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("ExamForm");
+                });
+
             modelBuilder.Entity("ExamManagement.Server.Entities.ItemType", b =>
                 {
                     b.HasOne("ExamManagement.Server.Entities.ItemTypeCategory", "ItemTypeCategory")
@@ -494,6 +728,36 @@ namespace ExamManagement.Server.Migrations
                         .IsRequired();
 
                     b.Navigation("ItemTypeCategory");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.Result", b =>
+                {
+                    b.HasOne("ExamManagement.Server.Entities.UserDetailExtensionStudentTemporary", "UserDetailExtensionStudentTemporary")
+                        .WithMany()
+                        .HasForeignKey("UserDetailExtensionStudentTemporaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserDetailExtensionStudentTemporary");
+                });
+
+            modelBuilder.Entity("ExamManagement.Server.Entities.ResultExtension", b =>
+                {
+                    b.HasOne("ExamManagement.Server.Entities.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ExamManagement.Server.Entities.Result", "Result")
+                        .WithMany()
+                        .HasForeignKey("ResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Result");
                 });
 
             modelBuilder.Entity("ExamManagement.Server.Entities.UserDetail", b =>
@@ -526,9 +790,9 @@ namespace ExamManagement.Server.Migrations
                     b.Navigation("UserDetail");
                 });
 
-            modelBuilder.Entity("ExamManagement.Server.Entities.UserDetailExtensionAbove", b =>
+            modelBuilder.Entity("ExamManagement.Server.Entities.UserDetailExtensionStudentTemporary", b =>
                 {
-                    b.HasOne("ExamManagement.Server.Entities.UserDetail", "UserDetailExtension")
+                    b.HasOne("ExamManagement.Server.Entities.UserDetailExtension", "UserDetailExtension")
                         .WithMany()
                         .HasForeignKey("UserDetailExtensionId")
                         .OnDelete(DeleteBehavior.Cascade)

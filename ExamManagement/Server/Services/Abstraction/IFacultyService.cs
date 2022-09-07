@@ -1,5 +1,6 @@
 ﻿using ExamManagement.Server.Entities;
 using Grpc.Protos;
+using System.Security.Claims;
 
 namespace ExamManagement.Server.Services.Abstraction
 {
@@ -10,5 +11,6 @@ namespace ExamManagement.Server.Services.Abstraction
         Task<FacultyMessage> GetFacultyByIdAsync(IdMessage idMessage);
         Task<UpdateFacultyResultMessage> UpdateFacultyAsync(UpdateFacultyMessage updateFacultyMessage);
         Task<DeleteFacultyResultMessage> DeleteFacultyAsync(IdMessage idMessage);
+        Task<IdMessage> GetFacultyIdForDepartmentUserAsync(ClaimsPrincipal user);
     }
 }

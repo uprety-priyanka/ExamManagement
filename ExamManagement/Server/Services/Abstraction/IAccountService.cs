@@ -17,5 +17,8 @@ namespace ExamManagement.Server.Services.Abstraction
         Task<List<DepartmentUserViewModel>> GetAllDepartmentAdminAsync(UserSearchMessage userSearchMessage);
         Task<UserDeleteResultMessage> DeleteUserAsync(DepartmentAdminIdMessage departmentAdminIdMessage);
         Task<List<UserDetailExtensionStudentTemporary>> GetStudentByBatchAsync(FacultySearchMessage message);
+        Task<DeleteStudentResultMessage> DeleteStudentAsync(StudentIdMessage studentIdMessage);
+        Task<UpgradeStudentResultmessage> UpgradeSemesterAsync(UpgradeStudentmessage studentmessage);
+        Task<List<UserDetailExtensionStudentTemporary>> GetStudentInFacultyAsync(AccFacultyIdMessage facultyId);
     }
 }

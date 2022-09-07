@@ -58,5 +58,11 @@ namespace ExamManagement.Server.GrpcPipelines
             return result;
         }
 
+        public override async Task<IdMessage> GetFacultyIdForCurrentlyLoggedInDepartmentUser(Empty request, ServerCallContext context)
+        {
+            var result = await _facultyService.GetFacultyIdForDepartmentUserAsync(context.GetHttpContext().User);
+            return result;
+        }
+
     }
 }

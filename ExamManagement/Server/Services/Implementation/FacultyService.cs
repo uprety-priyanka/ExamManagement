@@ -3,7 +3,9 @@ using ExamManagement.Server.Entities;
 using ExamManagement.Server.Services.Abstraction;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Protos;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace ExamManagement.Server.Services.Implementation
 {
@@ -11,10 +13,12 @@ namespace ExamManagement.Server.Services.Implementation
     {
 
         public readonly ApplicationContext _dbContext;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public FacultyService(ApplicationContext dbContext)
+        public FacultyService(ApplicationContext dbContext, UserManager<ApplicationUser> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
 
         public async Task<AddFacultyResultMessage> AddFacultyAsync(AddFacultyMessage addFacultyMessage)
@@ -100,6 +104,20 @@ namespace ExamManagement.Server.Services.Implementation
                 Id = result.Id,
                 FacultyName = result.FacultyName,
                 CreatedDate = result.CreatedDate.ToUniversalTime().ToTimestamp()
+            };
+        }
+
+        public async Task<IdMessage> GetFacultyIdForDepartmentUserAsync(ClaimsPrincipal user)
+        {
+            var findUer = await _userManager.FindByNameAsync(user?.Identity?.Name);
+            var facultyId = await _dbContext.UserDetail
+                .Where(x => x.ApplicationUserId == findUer.Id)
+                .Select(x => x.FacultyId)
+                .FirstOrDefaultAsync();
+
+            return new IdMessage
+            {
+                Id = facultyId
             };
         }
 

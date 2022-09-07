@@ -1,0 +1,43 @@
+﻿@inherits AddResultBase
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <EditForm Model="model" OnValidSubmit="AddGradeRecord">
+            <DataAnnotationsValidator />
+            <MudContainer>
+                <MudItem xs="12" md="12">
+                    <MudSelect T="int" Label="Course" MultiSelection="false" @bind-Value="model.CourseId">
+                        @foreach (var item in courseMessageList)
+                        {
+                            <MudSelectItem T="int" Value="@item.Id">@item.CourseName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" md="12">
+                    <MudSelect T="int" Label="Student" MultiSelection="false" @bind-Value="model.UserDetailExxtensionTemporartStudentId">
+                        @foreach (var item in userDetailExtensionTemporayIdAndNameMessageList)
+                        {
+                            <MudSelectItem T="int" Value="@item.UserDetailExtensionSudentTemporaryId">@item.FirstName @item.LastName</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudTextField Label="Grade" For="@(()=>model.Grade)" @bind-Value="model.Grade" InputType="InputType.Text"></MudTextField>
+                <MudCardActions>
+                    <MudSpacer />
+                    <MudButton Style="margin-right:4px;" ButtonType="ButtonType.Reset" OnClick="()=>MudDialog.Cancel()" Variant="Variant.Filled" Color="Color.Dark">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Disabled="submitButton" Variant="Variant.Filled" Color="Color.Primary">
+                        @if (submitButton)
+                        {
+                                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                                <MudText Class="ms-2">Adding Result</MudText>
+                        }
+                        else
+                        {
+                                <MudText>Add Result</MudText>
+                        }
+                    </MudButton>
+                </MudCardActions>
+            </MudContainer>
+        </EditForm>
+    </DialogContent>
+</MudDialog>

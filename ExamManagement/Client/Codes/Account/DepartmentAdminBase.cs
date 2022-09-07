@@ -1,7 +1,9 @@
-﻿using Grpc.Core;
+﻿using ExamManagement.Client.Data;
+using Grpc.Core;
 using Grpc.Protos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Security.Claims;
 
 namespace ExamManagement.Client.Codes.Account
 {
@@ -10,10 +12,22 @@ namespace ExamManagement.Client.Codes.Account
         public List<DepartmentUserMessage> _messages;
         [Inject]
         public AccountGrpcService.AccountGrpcServiceClient _grpcClient { get; set; }
+        [Inject]
+        public EMSAuthenticationStateProvider _authProvider { get; set; }
+
+        public string userRole = "";
 
         protected override async Task OnInitializedAsync()
         {
-            await FetchData("");
+
+            var auth = await _authProvider.GetAuthenticationStateAsync();
+
+            try
+            {
+                userRole = auth.User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
+                await FetchData("");
+            }
+            catch (Exception) { }
         }
 
         public async Task FetchData(string s) 
@@ -41,7 +55,7 @@ namespace ExamManagement.Client.Codes.Account
 
         public TableGroupDefinition<DepartmentUserMessage> _groupDefinition = new()
         {
-            GroupName = "Group",
+            GroupName = "Department",
             Indentation = false,
             Expandable = true,
             IsInitiallyExpanded = false,

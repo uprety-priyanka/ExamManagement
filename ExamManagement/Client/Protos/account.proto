@@ -18,6 +18,45 @@ service AccountGrpcService
 	rpc GetDepartmentUser(UserSearchMessage) returns (stream DepartmentUserMessage);
 	rpc DeleteDepartmentAdminUser(DepartmentAdminIdMessage) returns (UserDeleteResultMessage);
 	rpc GetStudentByBatch(FacultySearchMessage) returns (stream StudentMessage);
+	rpc DeleteStudent(StudentIdMessage) returns (DeleteStudentResultMessage);
+	rpc UpgradeStudentSemester(stream UpgradeStudentmessage) returns(UpgradeStudentResultmessage);
+	rpc GetStudentInFaculty(AccFacultyIdMessage) returns (stream userDetailExtensionTemporayIdAndNameMessage);
+}
+
+message AccFacultyIdMessage 
+{
+	int32 facultyId = 1;
+}
+
+message userDetailExtensionTemporayIdAndNameMessage 
+{
+	int32 userDetailExtensionSudentTemporaryId = 1;
+	string firstName = 2;
+	string lastName = 3;
+}
+
+message UpgradeStudentResultmessage
+{
+	bool success = 1;
+	string message = 2;
+
+}
+
+message UpgradeStudentmessage
+{
+	int32 userDetailExtensionTemporayId = 1;
+	int32 semester = 2;
+}
+
+message DeleteStudentResultMessage
+{
+	bool success = 1;
+	string message = 2;
+}
+
+message StudentIdMessage
+{
+	string id = 1;
 }
 
 message FacultySearchMessage

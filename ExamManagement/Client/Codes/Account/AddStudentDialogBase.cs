@@ -72,7 +72,7 @@ namespace ExamManagement.Client.Codes.Account
                 Password = model.Password,
                 RegistrationNumber = model.RegistrationNumber,
                 Email = model.Email,
-                ExamNumber = model.Email,
+                ExamNumber = model.ExamNumber,
                 ExamYear = model.ExamYear,
                 FacultyId = model.FacultyId,
                 GivenName = model.FirstName,

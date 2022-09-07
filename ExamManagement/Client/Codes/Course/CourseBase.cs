@@ -1,7 +1,9 @@
-﻿using Grpc.Core;
+﻿using ExamManagement.Client.Data;
+using Grpc.Core;
 using Grpc.Protos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Security.Claims;
 
 namespace ExamManagement.Client.Codes.Course
 {
@@ -11,10 +13,15 @@ namespace ExamManagement.Client.Codes.Course
         public CourseGrpcService.CourseGrpcServiceClient _grpcClient { get; set; }
         [Inject]
         public FacultyGrpcService.FacultyGrpcServiceClient _grpcFacultyClient { get; set; }
+        [Inject]
+        public EMSAuthenticationStateProvider _authProvider { get; set; }
+
         public int FacultyId = 0;
 
         public CourseMessage[] _courses;
-        public List<FacultyMessage> list;
+        public List<FacultyMessage> list = new List<FacultyMessage>();
+
+        public string userRole;
 
         public TableGroupDefinition<CourseMessage> _groupDefinition = new()
         {
@@ -27,13 +34,21 @@ namespace ExamManagement.Client.Codes.Course
 
         protected override async Task OnInitializedAsync()
         {
-            list = new List<FacultyMessage>();
-            var facultyStream = _grpcFacultyClient.GetAllFaculty(new SearchMessage { Search = "" });
 
-            while (await facultyStream.ResponseStream.MoveNext())
+            var auth = await _authProvider.GetAuthenticationStateAsync();
+
+            try
             {
-                list.Add(facultyStream.ResponseStream.Current);
+                userRole = auth.User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
+                list = new List<FacultyMessage>();
+                var facultyStream = _grpcFacultyClient.GetAllFaculty(new SearchMessage { Search = "" });
+
+                while (await facultyStream.ResponseStream.MoveNext())
+                {
+                    list.Add(facultyStream.ResponseStream.Current);
+                }
             }
+            catch (Exception) { }
         }
 
         public async void DoStuff(int newValue)

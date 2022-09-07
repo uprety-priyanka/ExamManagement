@@ -121,5 +121,47 @@ namespace ExamManagement.Server.GrpcPipelines
 
         }
 
+        public override async Task<DeleteStudentResultMessage> DeleteStudent(StudentIdMessage request, ServerCallContext context)
+        {
+            var result = await _accountService.DeleteStudentAsync(request);
+            return result;
+        }
+
+        public override async Task<UpgradeStudentResultmessage> UpgradeStudentSemester(IAsyncStreamReader<UpgradeStudentmessage> requestStream, ServerCallContext context)
+        {
+            while (await requestStream.MoveNext()) 
+            {
+                var result = await _accountService.UpgradeSemesterAsync(new UpgradeStudentmessage 
+                {
+                    Semester = requestStream.Current.Semester,
+                    UserDetailExtensionTemporayId = requestStream.Current.UserDetailExtensionTemporayId
+                });
+            }
+
+            return new UpgradeStudentResultmessage
+            {
+                Success = true,
+                Message = "Student has been upgraded."
+            };
+        }
+
+        public override async Task GetStudentInFaculty(AccFacultyIdMessage request, IServerStreamWriter<userDetailExtensionTemporayIdAndNameMessage> responseStream, ServerCallContext context)
+        {
+            var list = await _accountService.GetStudentInFacultyAsync(request);
+
+            foreach (var item in list)
+            {
+                if (context.CancellationToken.IsCancellationRequested)
+                    break;
+
+                await responseStream.WriteAsync(new userDetailExtensionTemporayIdAndNameMessage
+                {
+                    UserDetailExtensionSudentTemporaryId = item.Id,
+                    FirstName = item.UserDetailExtension.UserDetail.ApplicationUser.FirstName,
+                    LastName = item.UserDetailExtension.UserDetail.ApplicationUser.LastName
+                });
+            }
+        }
+
     }
 }

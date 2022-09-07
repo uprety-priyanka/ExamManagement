@@ -1,8 +1,10 @@
-﻿using ExamManagement.Client.Pages.Faculty;
+﻿using ExamManagement.Client.Data;
+using ExamManagement.Client.Pages.Faculty;
 using Grpc.Core;
 using Grpc.Protos;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using System.Security.Claims;
 
 namespace ExamManagement.Client.Codes.Faculty
 {
@@ -10,8 +12,11 @@ namespace ExamManagement.Client.Codes.Faculty
     {
         [Inject]
         public FacultyGrpcService.FacultyGrpcServiceClient _grpcClient { get; set; }
+        [Inject]
+        public EMSAuthenticationStateProvider _authProvider { get; set; }
+        public string userRole = "";
 
-        public List<FacultyMessage> facultyMessage;
+        public List<FacultyMessage> facultyMessage = new List<FacultyMessage>();
         public string search;
 
         public async Task FetchData(string s) 
@@ -31,8 +36,15 @@ namespace ExamManagement.Client.Codes.Faculty
 
         protected override async Task OnInitializedAsync()
         {
+            var auth = await _authProvider.GetAuthenticationStateAsync();
 
-            await FetchData("");
+            try
+            {
+                userRole = auth.User.Claims.First(x => x.Type == ClaimTypes.Role).Value;
+
+                await FetchData("");
+            }
+            catch (Exception) { }
         }
 
         public async Task OnSearch(string s)

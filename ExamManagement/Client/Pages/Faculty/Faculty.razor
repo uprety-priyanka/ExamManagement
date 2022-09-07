@@ -4,9 +4,13 @@
 @inherits FacultyBase
 
 <br />
-<MudContainer>
-    <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="OpenAddFaculty" Style="text-align:right;">Add a Faculty</MudButton>
-</MudContainer>
+
+@if (userRole == RoleConstant.SUPERADMIN) 
+{
+    <MudContainer>
+        <MudButton Variant="@Variant.Filled" Color="Color.Primary" OnClick="OpenAddFaculty" Style="text-align:right;">Add a Faculty</MudButton>
+    </MudContainer>
+}
 <br />
 <MudContainer>
     <MudTable Items="@facultyMessage" Dense="true" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info">
@@ -26,16 +30,19 @@
             <MudTd DataLabel="Created Date">@item.CreatedDate.ToDateTime().AddHours(5).AddMinutes(45).ToString("ddd, dd MMM yyy")</MudTd>
             <MudTd DataLabel="Actions">
                 <MudSpacer />
-                <MudTooltip Text="Edit Faculty">
-                    <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenUpadteFacultyDialog(item))" Color="Color.Success">
-                        <MudIcon Icon="fas fa-edit"></MudIcon>
-                    </MudButton>
-                </MudTooltip>
-                <MudTooltip Text="Delete Faculty">
-                    <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenDeleteFacultyDialog(item))" Color="Color.Error">
-                        <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
-                    </MudButton>
-                </MudTooltip>
+                @if (userRole == RoleConstant.SUPERADMIN) 
+                {
+                    <MudTooltip Text="Edit Faculty">
+                        <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenUpadteFacultyDialog(item))" Color="Color.Success">
+                            <MudIcon Icon="fas fa-edit"></MudIcon>
+                        </MudButton>
+                    </MudTooltip>
+                    <MudTooltip Text="Delete Faculty">
+                        <MudButton Variant="Variant.Filled" OnClick="@(()=>OpenDeleteFacultyDialog(item))" Color="Color.Error">
+                            <MudIcon Icon="@Icons.Filled.Delete"></MudIcon>
+                        </MudButton>
+                    </MudTooltip>
+                }
             </MudTd>
         </RowTemplate>
         <NoRecordsContent>

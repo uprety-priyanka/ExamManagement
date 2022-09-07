@@ -13,6 +13,8 @@ namespace ExamManagement.Server.Dependencies
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IFacultyService, FacultyService>();
             services.AddScoped<ICourseService, CourseService>();
+            services.AddScoped<IResultService, ResultService>();
+            services.AddScoped<IExamFormService, ExamFormService>();
 
             return services;
         }

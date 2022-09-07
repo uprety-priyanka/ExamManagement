@@ -15,10 +15,18 @@
                 <MudText>@sn</MudText>
             </MudDrawerHeader>
             <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Filled.Home">Home</MudNavLink>
-            <MudNavLink Href="/batch" Match="NavLinkMatch.All" Icon="@Icons.Filled.DateRange">Batch</MudNavLink>
+
+            @if (role == RoleConstant.SUPERADMIN || role == RoleConstant.DEPARTMENTADMIN) 
+            {
+                <MudNavLink Href="/batch" Match="NavLinkMatch.All" Icon="@Icons.Filled.DateRange">Batch</MudNavLink>
+            }
             <MudNavLink Href="/course" Match="NavLinkMatch.All" Icon="@Icons.Filled.MenuBook">Course</MudNavLink>
-            <MudNavLink Href="/departmentAdmin" Match="NavLinkMatch.All" Icon="@Icons.Filled.Build">Department Admin</MudNavLink>
+            @if (role != RoleConstant.STUDENT) 
+            {
+                <MudNavLink Href="/departmentAdmin" Match="NavLinkMatch.All" Icon="@Icons.Filled.Build">Department Admin</MudNavLink>
+            }
             <MudNavLink Href="/faculty" Match="NavLinkMatch.All" Icon="@Icons.Filled.FactCheck">Faculty</MudNavLink>
+            <MudNavLink Href="/result" Match="NavLinkMatch.All" Icon="@Icons.Filled.Book">Result</MudNavLink>
             <MudNavLink OnClick="LogOut" Match="NavLinkMatch.All" Icon="@Icons.Filled.Logout">Log out</MudNavLink>
         </MudDrawerContainer>
     </MudDrawer>
@@ -43,6 +51,7 @@
     bool open = true;
     string gn = "";
     string sn = "";
+    string role = "";
 
     void ToggleDrawer()
     {
@@ -58,6 +67,7 @@
 
             gn = authState.User.Claims.Where(x => x.Type == ClaimTypes.GivenName).First().Value;
             sn = authState.User.Claims.Where(x => x.Type == ClaimTypes.Surname).First().Value;
+            role = authState.User.Claims.Where(x => x.Type == ClaimTypes.Role).First().Value;
         }
         catch (Exception ex) { }
 

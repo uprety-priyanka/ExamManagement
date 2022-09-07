@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,6 +11,8 @@
     <None Remove="Protos\account.proto" />
     <None Remove="Protos\course.proto" />
     <None Remove="Protos\faculty.proto" />
+    <None Remove="Protos\forms.proto" />
+    <None Remove="Protos\result.proto" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +39,8 @@
     </Protobuf>
     <Protobuf Include="Protos\course.proto" GrpcServices="Client" />
     <Protobuf Include="Protos\faculty.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\forms.proto" GrpcServices="Client" />
+    <Protobuf Include="Protos\result.proto" GrpcServices="Client" />
   </ItemGroup>
 
   <ItemGroup>
