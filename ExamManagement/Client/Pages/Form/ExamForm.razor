@@ -1,0 +1,112 @@
+﻿@page "/form"
+@layout MainLayout
+@inherits ExamFormBase
+
+<PageTitle>Exam Form</PageTitle>
+<br />
+<AuthorizeView Context="Auth">
+    <Authorized>
+        @if (userRole == RoleConstant.STUDENT || userRole == RoleConstant.DEPARTMENTADMIN)
+        {
+            <MudContainer>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="NavigateToFillForm">Fill a Form</MudButton>
+                <br/>
+                <br />
+                <MudExpansionPanels DisableBorders="true">
+                    @foreach (var form in formResultMessages)
+                    {
+                        <MudExpansionPanel Text="@form.FormId.ToString()">
+                            <MudGrid>
+
+                                <MudItem xs="6">First Name:@form.FirstName</MudItem>
+                                <MudItem xs="6">Last Name:@form.LastName</MudItem>
+
+                                <MudItem xs="6">Exam Number:@form.ExamNumber</MudItem>
+                                <MudItem xs="6">Registration Number:@form.RegistrationNumber</MudItem>
+
+                                <MudItem xs="6">Faculty:@form.FacultyName</MudItem>
+                                <MudItem xs="6">Exam Year:@form.ExamYear</MudItem>
+
+                                <MudItem xs="12">
+                                    <MudText Typo="Typo.h6">Regular Subjects</MudText>
+                                    <MudTable Items="@form.RegularFormResultSupportMessages" Hover="true" Breakpoint="Breakpoint.Sm">
+                                        <HeaderContent>
+                                            <MudTh>Course Code</MudTh>
+                                            <MudTh>Course Name</MudTh>
+                                            <MudTh>Credit</MudTh>
+                                        </HeaderContent>
+                                        <RowTemplate>
+                                            <MudTd DataLabel="Course Code">@context.CourseCode</MudTd>
+                                            <MudTd DataLabel="Course Name">@context.CourseName</MudTd>
+                                            <MudTd DataLabel="Course Credit">@context.Credit</MudTd>
+                                        </RowTemplate>
+                                    </MudTable>
+                                </MudItem>
+                                @if (form.PrerequisiteFormResultSupportMessage.Count >= 0)
+                                {
+                                    <MudItem xs="12">
+                                        <MudText Typo="Typo.h6">Prerequisite Subjects</MudText>
+                                        <MudTable Items="@form.PrerequisiteFormResultSupportMessage" Hover="true" Breakpoint="Breakpoint.Sm">
+                                            <HeaderContent>
+                                                <MudTh>Course Code</MudTh>
+                                                <MudTh>Course Name</MudTh>
+                                                <MudTh>Credit</MudTh>
+                                            </HeaderContent>
+                                            <RowTemplate>
+                                                <MudTd DataLabel="Course Code">@context.CourseCode</MudTd>
+                                                <MudTd DataLabel="Course Name">@context.CourseName</MudTd>
+                                                <MudTd DataLabel="Course Credit">@context.Credit</MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
+                                    </MudItem>
+                                }
+                                @if (form.ConcurrentFormResultSupportMessages.Count >= 0)
+                                {
+                                    <MudItem xs="12">
+                                        <MudText Typo="Typo.h6">Concurrent Subjects</MudText>
+                                        <MudTable Items="@form.ConcurrentFormResultSupportMessages" Hover="true" Breakpoint="Breakpoint.Sm">
+                                            <HeaderContent>
+                                                <MudTh>Course Code</MudTh>
+                                                <MudTh>Course Name</MudTh>
+                                                <MudTh>Credit</MudTh>
+                                            </HeaderContent>
+                                            <RowTemplate>
+                                                <MudTd DataLabel="Course Code">@context.CourseCode</MudTd>
+                                                <MudTd DataLabel="Course Name">@context.CourseName</MudTd>
+                                                <MudTd DataLabel="Course Credit">@context.Credit</MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
+                                    </MudItem>
+                                }
+                                @if (form.BackFormResultSupportMessages.Count >= 0)
+                                {
+                                    <MudItem xs="12">
+                                        <MudText Typo="Typo.h6">Back Subjects</MudText>
+                                        <MudTable Items="@form.PrerequisiteFormResultSupportMessage" Hover="true" Breakpoint="Breakpoint.Sm">
+                                            <HeaderContent>
+                                                <MudTh>Course Code</MudTh>
+                                                <MudTh>Course Name</MudTh>
+                                                <MudTh>Credit</MudTh>
+                                            </HeaderContent>
+                                            <RowTemplate>
+                                                <MudTd DataLabel="Course Code">@context.CourseCode</MudTd>
+                                                <MudTd DataLabel="Course Name">@context.CourseName</MudTd>
+                                                <MudTd DataLabel="Course Credit">@context.Credit</MudTd>
+                                            </RowTemplate>
+                                        </MudTable>
+                                    </MudItem>
+                                }
+
+                            </MudGrid>
+                        </MudExpansionPanel>
+                    }
+                </MudExpansionPanels>
+            </MudContainer>
+        }
+    </Authorized>
+    <NotAuthorized>
+        @{
+            _navigate.NavigateTo("/account/login");
+        }
+    </NotAuthorized>
+</AuthorizeView>

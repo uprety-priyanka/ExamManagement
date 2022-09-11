@@ -20,6 +20,8 @@ namespace ExamManagement.Client.Codes.Result
         public ResultGrpcService.ResultGrpcServiceClient _resultClient { get; set; }
         [Inject]
         public FacultyGrpcService.FacultyGrpcServiceClient _facultyClient { get; set; }
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
         public List<GetResultPerFacultyResultMessage> facultyResultList = new List<GetResultPerFacultyResultMessage>();
         public List<FacultyMessage> facultyList = new List<FacultyMessage>();
         public GetResultPerStudentResultMessage student = new GetResultPerStudentResultMessage();
@@ -132,6 +134,23 @@ namespace ExamManagement.Client.Codes.Result
             FacultyId = facultyId;
             await FetchData(search, facultyId);
             StateHasChanged();
+        }
+
+        public async Task DeleteResult(int userDetailExtensionStudentTemporaryId) 
+        {
+            var result = await _resultClient.DeleteResultAsync(new DeleteResultMessage 
+            {
+                UserDetailExtensionStudentTemporaryId = userDetailExtensionStudentTemporaryId
+            });
+
+            if (result.Success)
+            {
+                Snackbar.Add(result.Message, Severity.Success);
+            }
+            else 
+            {
+                Snackbar.Add(result.Message, Severity.Error);
+            }
         }
 
     }

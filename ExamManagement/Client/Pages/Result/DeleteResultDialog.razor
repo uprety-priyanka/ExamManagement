@@ -1,0 +1,28 @@
+﻿@inherits DeleteResultDialogBase
+
+<MudDialog DisableSidePadding="true">
+    <DialogContent>
+        <MudContainer>
+            <MudText>First Name: @info.FirstName</MudText>
+            <MudText>Last Name: @info.LastName</MudText>
+            <MudText>Roll Number: @info.RollNumber</MudText>
+            <MudText>Registration Number: @info.RegistrationNumber</MudText>
+            <MudCardActions>
+                <MudSpacer />
+                <MudButton Style="margin-right:4px;" ButtonType="ButtonType.Reset" OnClick="()=>MudDialog.Cancel()" Variant="Variant.Filled" Color="Color.Dark">Cancel</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Disabled="DeleteButton" OnClick="DeleteResult" Variant="Variant.Filled" Color="Color.Error">
+                    @if (DeleteButton)
+                    {
+                        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                        <MudText Class="ms-2">Deleting Course</MudText>
+                    }
+                    else
+                    {
+                        <MudText>Delete Course</MudText>
+                    }
+                </MudButton>
+            </MudCardActions>
+
+        </MudContainer>
+    </DialogContent>
+</MudDialog>

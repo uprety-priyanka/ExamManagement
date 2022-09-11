@@ -106,7 +106,7 @@ public class ResultGrpcPipeline:ResultGrpcService.ResultGrpcServiceBase
             {
                 CourseName = item.Course.CourseName,
                 Grade = item.Grade,
-                Semester = item.Result.UserDetailExtensionStudentTemporary.Semester,
+                Semester = item.Course.SemesterTypeId,
                 CourseId = item.CourseId
             });
         }

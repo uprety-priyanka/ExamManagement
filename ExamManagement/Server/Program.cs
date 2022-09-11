@@ -12,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddDbContextPool<ApplicationContext>((o, x) =>
 {
     x.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));

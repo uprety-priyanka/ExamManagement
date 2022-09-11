@@ -21,6 +21,46 @@ service AccountGrpcService
 	rpc DeleteStudent(StudentIdMessage) returns (DeleteStudentResultMessage);
 	rpc UpgradeStudentSemester(stream UpgradeStudentmessage) returns(UpgradeStudentResultmessage);
 	rpc GetStudentInFaculty(AccFacultyIdMessage) returns (stream userDetailExtensionTemporayIdAndNameMessage);
+	rpc GetCurrentStudent(google.protobuf.Empty) returns (CurrentStudentMessage);
+	rpc SendResetPasswordEmail(CheckEmailAddressMessage) returns(google.protobuf.Empty);
+	rpc ResetUserPassword(ResetPasswordMessage) returns(ResetPasswordResultMessage);
+}
+
+message CheckEmailAddressMessage
+{
+	string Email = 1;
+}
+
+message ResetPasswordMessage
+{
+	string userId = 1;
+	string resetPasswordToken = 2;
+	string password = 3;
+}
+
+message ResetPasswordResultMessage 
+{
+	bool success = 1;
+	enum ResetPasswordErrorType
+	{
+		NoSuchUserFound = 0;
+		InvalidToken = 1;
+		CouldNotResetPassword = 2;
+		NoAnyError = 3;
+	}
+	ResetPasswordErrorType PasswordResetErrorType = 2;
+}
+
+message CurrentStudentMessage 
+{
+	string firstName = 1;
+	string lastName = 2;
+	string registrationNumber = 3;
+	string examNumber = 4;
+	int32 rollNumber = 5;
+	int32 batch = 6;
+	string faculty = 7;
+	string emailAddress = 8;
 }
 
 message AccFacultyIdMessage 

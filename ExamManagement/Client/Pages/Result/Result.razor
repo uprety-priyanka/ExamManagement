@@ -69,9 +69,9 @@
                                             <MudTd DataLabel="Course Name">@context.CourseName</MudTd>
                                             <MudTd DataLabel="Grade Scored">@context.Grade</MudTd>
                                         </RowTemplate>
-                                        <GroupFooterTemplate>
+                                        @*<GroupFooterTemplate>
                                             <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">SGPA: @result.SGPA </MudTh>
-                                        </GroupFooterTemplate>
+                                        </GroupFooterTemplate>*@
                                     </MudTable>
                                 </ItemContent>
                             </MudTimelineItem>
@@ -97,7 +97,7 @@
                                 <MudText>Exam Number: @result.ExamNumber</MudText>
                                 <MudText>Roll Number: @result.RollNumber</MudText>
                                 <MudText>Registration Number: @result.RegistrationNumber</MudText>
-                                <MudButton Variant="Variant.Filled" Color="Color.Error">Delete Result of @result.FirstName @result.LastName</MudButton>
+                                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="(()=> OpenDeleteResulteDialog(result))">Delete Result of @result.FirstName @result.LastName</MudButton>
                             </ItemOpposite>
                             <ItemContent>
                                 <MudTable Hover="true" Breakpoint="Breakpoint.Sm" Height="500px" FixedHeader="true"
@@ -121,9 +121,9 @@
                                             <MudTd DataLabel="Course Name">@context.CourseName</MudTd>
                                             <MudTd DataLabel="Grade Scored">@context.Grade</MudTd>
                                         </RowTemplate>
-                                        <GroupFooterTemplate>
+                                        @*<GroupFooterTemplate>
                                             <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">SGPA: @result.SGPA </MudTh>
-                                        </GroupFooterTemplate>
+                                        </GroupFooterTemplate>*@
                                     </MudTable>
                                 </ItemContent>
                             </MudTimelineItem>
@@ -156,9 +156,9 @@
                             <MudTd DataLabel="Course Name">@context.CourseName</MudTd>
                             <MudTd DataLabel="Grade Scored">@context.Grade</MudTd>
                         </RowTemplate>
-                        <GroupFooterTemplate>
+                        @*<GroupFooterTemplate>
                             <MudTh Class="mud-table-cell-custom-group mud-table-cell-custom-group-footer" colspan="5">SGPA: @student.SGPA </MudTh>
-                        </GroupFooterTemplate>
+                        </GroupFooterTemplate>*@
                     </MudTable>
                 </MudContainer>
         }
@@ -172,5 +172,15 @@
         var result = await dialog.Result;
         await DoStuff(FacultyId);
         StateHasChanged();
+    }
+
+    public async Task OpenDeleteResulteDialog(GetResultPerFacultyResultMessage message)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("info", message);
+        var courseDelete = DialogService.Show<DeleteResultDialog>($"Are you sure you want to delete result of {message.FirstName}?", parameters);
+
+        var result = await courseDelete.Result;
+        await FetchData(search, FacultyId);
     }
 }

@@ -20,5 +20,6 @@ namespace ExamManagement.Server.Services.Abstraction
         Task<DeleteStudentResultMessage> DeleteStudentAsync(StudentIdMessage studentIdMessage);
         Task<UpgradeStudentResultmessage> UpgradeSemesterAsync(UpgradeStudentmessage studentmessage);
         Task<List<UserDetailExtensionStudentTemporary>> GetStudentInFacultyAsync(AccFacultyIdMessage facultyId);
+        Task<CurrentStudentMessage> GetCurrentStudentAsync();
     }
 }

@@ -9,7 +9,7 @@
     </div>
     <MudDivider class="self-divider" Vertical="true" FlexItem="true" DividerType="DividerType.Middle" Style="height: 70vh;width: 1px;margin: 15vh auto;" />
     <div id="login-form">
-        <EditForm Model="@loginViewModel" OnValidSubmit="@LogUserIn">
+        <EditForm Model="@loginViewModel" OnValidSubmit="LogUserIn">
             <DataAnnotationsValidator />
             <MudCardHeader>
                 <CardHeaderContent>
@@ -35,7 +35,7 @@
                 </MudCardActions>
                 <MudItem Style="text-align:right;">
                     <MudSpacer />
-                    <MudLink Class="reg">Forgot your password?</MudLink>
+                    <MudButton Class="reg" Variant="Variant.Text" OnClick="ResetAccount">Forgot your password?</MudButton>
                     <br />
                     <MudSpacer />
                     <MudLink Class="reg" Href="/registersuperadmin">Don't have an account?</MudLink>
@@ -95,3 +95,11 @@
     }
 
 </style>
+
+@code
+{
+    private void ResetAccount()
+    {
+        var showDialog = DialogService.Show<RequestAccountPasswordResetDialog>("Enter your email address");
+    }
+}

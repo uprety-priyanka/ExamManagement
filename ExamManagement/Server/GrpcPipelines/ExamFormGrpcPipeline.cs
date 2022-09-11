@@ -20,9 +20,30 @@ public class ExamFormGrpcPipeline:ExamFormGrpcService.ExamFormGrpcServiceBase
         return result;
     }
 
-    public override Task<FillFormResultMessage> FillForm(FillFormMessage request, ServerCallContext context)
+    public override async Task GetFormPerStudent(Empty request, IServerStreamWriter<FormResultMessage> responseStream, ServerCallContext context)
     {
-        return base.FillForm(request, context);
+        var formPerStudent = await _examFormService.GetFormPerStudentAsync();
 
+        foreach (var item in formPerStudent) 
+        {
+            await responseStream.WriteAsync(item);
+        }
+
+    }
+
+    public override async Task GetFormPerFaculty(Empty request, IServerStreamWriter<FormResultMessage> responseStream, ServerCallContext context)
+    {
+        var formPerStudent = await _examFormService.GetFormPerFacultyAsync();
+
+        foreach (var item in formPerStudent)
+        {
+            await responseStream.WriteAsync(item);
+        }
+    }
+
+    public override async Task<FillFormResultMessage> FillForm(FillFormMessage request, ServerCallContext context)
+    {
+        var result = await _examFormService.FillFormAsync(request);
+        return result;
     }
 }

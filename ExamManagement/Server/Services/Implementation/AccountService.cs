@@ -176,6 +176,33 @@ namespace ExamManagement.Server.Services.Implementation
             return list;
         }
 
+        public async Task<CurrentStudentMessage> GetCurrentStudentAsync()
+        {
+            var User = await _userManager.FindByNameAsync(_accessor.HttpContext.User.Identity.Name);
+
+            var student = await _dbContext.UserDetailExtensionStudentTemporary
+                                            .Include(x => x.UserDetailExtension)
+                                            .Include(x => x.UserDetailExtension.UserDetail)
+                                            .Include(x => x.UserDetailExtension.UserDetail.Faculty)
+                                            .Include(x => x.UserDetailExtension.UserDetail.ApplicationUser)
+                                            .Where(x => x.UserDetailExtension.UserDetail.ApplicationUserId == User.Id)
+                                            .FirstOrDefaultAsync();
+
+            var currentStudentMessage = new CurrentStudentMessage 
+            {
+                EmailAddress = student.UserDetailExtension.UserDetail.ApplicationUser.Email,
+                Batch = student.UserDetailExtension.Batch,
+                ExamNumber = student.UserDetailExtension.ExamNumber,
+                Faculty = student.UserDetailExtension.UserDetail.Faculty.FacultyName,
+                FirstName = student.UserDetailExtension.UserDetail.ApplicationUser.FirstName,
+                LastName = student.UserDetailExtension.UserDetail.ApplicationUser.LastName,
+                RegistrationNumber = student.UserDetailExtension.RegistrationNumber,
+                RollNumber = student.UserDetailExtension.RollNumber
+            };
+
+            return currentStudentMessage;
+        }
+
         public async Task<CurrentUserMessage> GetCurrentUserAsync()
         {
             if (_accessor.HttpContext.User.Identity.IsAuthenticated)

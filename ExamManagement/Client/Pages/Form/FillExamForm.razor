@@ -4,13 +4,13 @@
 
 <PageTitle>Fill Exam Form</PageTitle>
 
-@if(userRole == RoleConstant.STUDENT)
+@if (userRole == RoleConstant.STUDENT)
 {
     <MudContainer>
         <br>
         <EditForm Model="model" OnValidSubmit="FillForm">
             <DataAnnotationsValidator />
-            <MudText Typo="Typo.h4">Regular Subjects</MudText>
+            <MudText Typo="Typo.h6">Regular Subjects</MudText>
             <br>
             <MudSelect Label="Regular Subjects" SelectAll="true" MultiSelection="true" Required="true" RequiredError="All regular Subjects Must be selected." @bind-SelectedValues="selectedRegularSubjects">
                 @foreach (var item in preFillRegularFormResultSupportMessages)
@@ -19,20 +19,22 @@
                 }
             </MudSelect>
 
-            @if (preFillConcurrentFormResultSupportMessages.Count > 0) 
+            @if (preFillConcurrentFormResultSupportMessages.Count > 0)
             {
-            <MudText Typo="Typo.h4">Regular Subjects</MudText>
-            <MudSelect Label="Concurrent Subjects" SelectAll="true" MultiSelection="true" @bind-SelectedValues="selectedConcurrentSubjects">
-                @foreach (var item in preFillConcurrentFormResultSupportMessages)
-                {
-                    <MudSelectItem T="int" Value="@item.CourseId">@item.CourseName</MudSelectItem>
-                }
-            </MudSelect>
+                <br>
+                <MudText Typo="Typo.h6">Concurrent Subjects</MudText>
+                <MudSelect Label="Concurrent Subjects" SelectAll="true" MultiSelection="true" @bind-SelectedValues="selectedConcurrentSubjects">
+                    @foreach (var item in preFillConcurrentFormResultSupportMessages)
+                    {
+                        <MudSelectItem T="int" Value="@item.CourseId">@item.CourseName</MudSelectItem>
+                    }
+                </MudSelect>
             }
 
             @if (preFillPrerequisiteFormResultSupportMessages.Count > 0)
             {
-                <MudText Typo="Typo.h4">Regular Subjects</MudText>
+                <br>
+                <MudText Typo="Typo.h6">Prerequisite Subjects</MudText>
                 <MudSelect Label="Prerequisite Subjects" SelectAll="true" MultiSelection="true" @bind-SelectedValues="selectedPrerequisiteSubjects">
                     @foreach (var item in preFillPrerequisiteFormResultSupportMessages)
                     {
@@ -43,7 +45,8 @@
 
             @if (preFillBackFormResultSupportMessages.Count > 0)
             {
-                <MudText Typo="Typo.h4">Regular Subjects</MudText>
+                <br>
+                <MudText Typo="Typo.h6">Back Subjects</MudText>
                 <MudSelect Label="Back Subjects" SelectAll="true" MultiSelection="true" @bind-SelectedValues="selectedBackSubjects">
                     @foreach (var item in preFillBackFormResultSupportMessages)
                     {
@@ -52,7 +55,7 @@
                 </MudSelect>
             }
 
-            <br/>
+            <br />
             <MudCardActions>
                 <MudSpacer />
                 <MudButton Style="margin-right:4px;" ButtonType="ButtonType.Reset" OnClick="()=>_navigate.NavigateTo(ef)" Variant="Variant.Filled" Color="Color.Dark">Cancel</MudButton>

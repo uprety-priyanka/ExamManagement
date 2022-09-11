@@ -11,6 +11,54 @@ service ExamFormGrpcService
 {
 	rpc PreFillForm (ApplicationUserIdMessage) returns (PreFillFormResultMessage);
 	rpc FillForm (FillFormMessage) returns (FillFormResultMessage);
+	rpc GetFormPerStudent(google.protobuf.Empty) returns (stream FormResultMessage);
+	rpc GetFormPerFaculty(google.protobuf.Empty) returns (stream FormResultMessage);
+}
+
+
+message FormResultMessage
+{
+	repeated RegularFormResultSupportMessage RegularFormResultSupportMessages = 1;
+	repeated ConcurrentFormResultSupportMessage ConcurrentFormResultSupportMessages = 2;
+	repeated PrerequisiteFormResultSupportMessage PrerequisiteFormResultSupportMessage = 3;
+	repeated BackFormResultSupportMessage BackFormResultSupportMessages = 4;
+
+	string firstName = 5;
+	string lastName = 6;
+	string examNumber = 7;
+	string registrationNumber = 8;
+	int32 examYear = 9;
+	string facultyName = 10;
+	int32 formId = 11;
+
+}
+
+message BackFormResultSupportMessage 
+{
+	string CourseName = 1;
+	string CourseCode = 2;
+	int32 Credit = 3;
+}
+
+message ConcurrentFormResultSupportMessage 
+{
+	string CourseName = 1;
+	string CourseCode = 2;
+	int32 Credit = 3;
+}
+
+message PrerequisiteFormResultSupportMessage 
+{
+	string CourseName = 1;
+	string CourseCode = 2;
+	int32 Credit = 3;
+}
+
+message RegularFormResultSupportMessage 
+{
+	string CourseName = 1;
+	string CourseCode = 2;
+	int32 Credit = 3;
 }
 
 message PreFillFormResultMessage 

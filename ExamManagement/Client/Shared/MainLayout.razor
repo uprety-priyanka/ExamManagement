@@ -21,11 +21,15 @@
                 <MudNavLink Href="/batch" Match="NavLinkMatch.All" Icon="@Icons.Filled.DateRange">Batch</MudNavLink>
             }
             <MudNavLink Href="/course" Match="NavLinkMatch.All" Icon="@Icons.Filled.MenuBook">Course</MudNavLink>
-            @if (role != RoleConstant.STUDENT) 
+            @if (role != RoleConstant.STUDENT || role != RoleConstant.DEPARTMENTADMIN) 
             {
                 <MudNavLink Href="/departmentAdmin" Match="NavLinkMatch.All" Icon="@Icons.Filled.Build">Department Admin</MudNavLink>
             }
             <MudNavLink Href="/faculty" Match="NavLinkMatch.All" Icon="@Icons.Filled.FactCheck">Faculty</MudNavLink>
+            @if (role == RoleConstant.STUDENT || role == RoleConstant.DEPARTMENTADMIN)
+            {
+                <MudNavLink Href="/form" Match="NavLinkMatch.All" Icon="@Icons.Filled.DynamicForm">Exam Form</MudNavLink>
+            }
             <MudNavLink Href="/result" Match="NavLinkMatch.All" Icon="@Icons.Filled.Book">Result</MudNavLink>
             <MudNavLink OnClick="LogOut" Match="NavLinkMatch.All" Icon="@Icons.Filled.Logout">Log out</MudNavLink>
         </MudDrawerContainer>
